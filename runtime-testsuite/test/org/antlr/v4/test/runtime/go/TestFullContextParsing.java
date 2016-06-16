@@ -34,7 +34,7 @@ public class TestFullContextParsing extends BaseTest {
 	@Test
 	public void testAmbiguityNoLoop() throws Exception {
 		mkdir(parserpkgdir);
-		StringBuilder grammarBuilder = new StringBuilder(218);
+		StringBuilder grammarBuilder = new StringBuilder(217);
 		grammarBuilder.append("grammar T;\n");
 		grammarBuilder.append("prog\n");
 		grammarBuilder.append("@init {p.Interpreter.SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection);}\n");
@@ -154,7 +154,7 @@ public class TestFullContextParsing extends BaseTest {
 	@Test
 	public void testExprAmbiguity_1() throws Exception {
 		mkdir(parserpkgdir);
-		StringBuilder grammarBuilder = new StringBuilder(293);
+		StringBuilder grammarBuilder = new StringBuilder(292);
 		grammarBuilder.append("grammar T;\n");
 		grammarBuilder.append("s\n");
 		grammarBuilder.append("@init {p.Interpreter.SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection);}\n");
@@ -184,7 +184,7 @@ public class TestFullContextParsing extends BaseTest {
 	@Test
 	public void testExprAmbiguity_2() throws Exception {
 		mkdir(parserpkgdir);
-		StringBuilder grammarBuilder = new StringBuilder(293);
+		StringBuilder grammarBuilder = new StringBuilder(292);
 		grammarBuilder.append("grammar T;\n");
 		grammarBuilder.append("s\n");
 		grammarBuilder.append("@init {p.Interpreter.SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection);}\n");
@@ -216,7 +216,7 @@ public class TestFullContextParsing extends BaseTest {
 	@Test
 	public void testFullContextIF_THEN_ELSEParse_1() throws Exception {
 		mkdir(parserpkgdir);
-		StringBuilder grammarBuilder = new StringBuilder(243);
+		StringBuilder grammarBuilder = new StringBuilder(242);
 		grammarBuilder.append("grammar T;\n");
 		grammarBuilder.append("s \n");
 		grammarBuilder.append("@init {p.Interpreter.SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection);}\n");
@@ -242,7 +242,7 @@ public class TestFullContextParsing extends BaseTest {
 	@Test
 	public void testFullContextIF_THEN_ELSEParse_2() throws Exception {
 		mkdir(parserpkgdir);
-		StringBuilder grammarBuilder = new StringBuilder(243);
+		StringBuilder grammarBuilder = new StringBuilder(242);
 		grammarBuilder.append("grammar T;\n");
 		grammarBuilder.append("s \n");
 		grammarBuilder.append("@init {p.Interpreter.SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection);}\n");
@@ -271,7 +271,7 @@ public class TestFullContextParsing extends BaseTest {
 	@Test
 	public void testFullContextIF_THEN_ELSEParse_3() throws Exception {
 		mkdir(parserpkgdir);
-		StringBuilder grammarBuilder = new StringBuilder(243);
+		StringBuilder grammarBuilder = new StringBuilder(242);
 		grammarBuilder.append("grammar T;\n");
 		grammarBuilder.append("s \n");
 		grammarBuilder.append("@init {p.Interpreter.SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection);}\n");
@@ -301,7 +301,7 @@ public class TestFullContextParsing extends BaseTest {
 	@Test
 	public void testFullContextIF_THEN_ELSEParse_4() throws Exception {
 		mkdir(parserpkgdir);
-		StringBuilder grammarBuilder = new StringBuilder(243);
+		StringBuilder grammarBuilder = new StringBuilder(242);
 		grammarBuilder.append("grammar T;\n");
 		grammarBuilder.append("s \n");
 		grammarBuilder.append("@init {p.Interpreter.SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection);}\n");
@@ -332,7 +332,7 @@ public class TestFullContextParsing extends BaseTest {
 	@Test
 	public void testFullContextIF_THEN_ELSEParse_5() throws Exception {
 		mkdir(parserpkgdir);
-		StringBuilder grammarBuilder = new StringBuilder(243);
+		StringBuilder grammarBuilder = new StringBuilder(242);
 		grammarBuilder.append("grammar T;\n");
 		grammarBuilder.append("s \n");
 		grammarBuilder.append("@init {p.Interpreter.SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection);}\n");
@@ -366,7 +366,7 @@ public class TestFullContextParsing extends BaseTest {
 	@Test
 	public void testFullContextIF_THEN_ELSEParse_6() throws Exception {
 		mkdir(parserpkgdir);
-		StringBuilder grammarBuilder = new StringBuilder(243);
+		StringBuilder grammarBuilder = new StringBuilder(242);
 		grammarBuilder.append("grammar T;\n");
 		grammarBuilder.append("s \n");
 		grammarBuilder.append("@init {p.Interpreter.SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection);}\n");
@@ -400,7 +400,7 @@ public class TestFullContextParsing extends BaseTest {
 	@Test
 	public void testLoopsSimulateTailRecursion() throws Exception {
 		mkdir(parserpkgdir);
-		StringBuilder grammarBuilder = new StringBuilder(317);
+		StringBuilder grammarBuilder = new StringBuilder(316);
 		grammarBuilder.append("grammar T;\n");
 		grammarBuilder.append("prog\n");
 		grammarBuilder.append("@init {p.Interpreter.SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection);}\n");

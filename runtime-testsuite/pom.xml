@@ -119,6 +119,8 @@
                     <argument>${basedir}/test</argument>
                     <argument>-templates</argument>
                     <argument>${basedir}/resources/org/antlr/v4/test/runtime/templates</argument>
+                    <argument>-target</argument> <!-- TODO remove this before merging with upstream! -->
+                    <argument>Go</argument> <!-- TODO remove this before merging with upstream! -->
                   </arguments>
                 </configuration>
               </execution>

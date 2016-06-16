@@ -12,7 +12,7 @@ public class TestListeners extends BaseTest {
 	@Test
 	public void testBasic() throws Exception {
 		mkdir(parserpkgdir);
-		StringBuilder grammarBuilder = new StringBuilder(569);
+		StringBuilder grammarBuilder = new StringBuilder(567);
 		grammarBuilder.append("grammar T;\n");
 		grammarBuilder.append("@parser::header {\n");
 		grammarBuilder.append("}\n");
@@ -64,7 +64,7 @@ public class TestListeners extends BaseTest {
 	@Test
 	public void testLR() throws Exception {
 		mkdir(parserpkgdir);
-		StringBuilder grammarBuilder = new StringBuilder(743);
+		StringBuilder grammarBuilder = new StringBuilder(742);
 		grammarBuilder.append("grammar T;\n");
 		grammarBuilder.append("@parser::header {\n");
 		grammarBuilder.append("}\n");
@@ -124,7 +124,7 @@ public class TestListeners extends BaseTest {
 	@Test
 	public void testLRWithLabels() throws Exception {
 		mkdir(parserpkgdir);
-		StringBuilder grammarBuilder = new StringBuilder(734);
+		StringBuilder grammarBuilder = new StringBuilder(733);
 		grammarBuilder.append("grammar T;\n");
 		grammarBuilder.append("@parser::header {\n");
 		grammarBuilder.append("}\n");
@@ -183,7 +183,7 @@ public class TestListeners extends BaseTest {
 	@Test
 	public void testRuleGetters_1() throws Exception {
 		mkdir(parserpkgdir);
-		StringBuilder grammarBuilder = new StringBuilder(768);
+		StringBuilder grammarBuilder = new StringBuilder(767);
 		grammarBuilder.append("grammar T;\n");
 		grammarBuilder.append("@parser::header {\n");
 		grammarBuilder.append("}\n");
@@ -239,7 +239,7 @@ public class TestListeners extends BaseTest {
 	@Test
 	public void testRuleGetters_2() throws Exception {
 		mkdir(parserpkgdir);
-		StringBuilder grammarBuilder = new StringBuilder(768);
+		StringBuilder grammarBuilder = new StringBuilder(767);
 		grammarBuilder.append("grammar T;\n");
 		grammarBuilder.append("@parser::header {\n");
 		grammarBuilder.append("}\n");
@@ -295,7 +295,7 @@ public class TestListeners extends BaseTest {
 	@Test
 	public void testTokenGetters_1() throws Exception {
 		mkdir(parserpkgdir);
-		StringBuilder grammarBuilder = new StringBuilder(699);
+		StringBuilder grammarBuilder = new StringBuilder(698);
 		grammarBuilder.append("grammar T;\n");
 		grammarBuilder.append("@parser::header {\n");
 		grammarBuilder.append("}\n");
@@ -350,7 +350,7 @@ public class TestListeners extends BaseTest {
 	@Test
 	public void testTokenGetters_2() throws Exception {
 		mkdir(parserpkgdir);
-		StringBuilder grammarBuilder = new StringBuilder(699);
+		StringBuilder grammarBuilder = new StringBuilder(698);
 		grammarBuilder.append("grammar T;\n");
 		grammarBuilder.append("@parser::header {\n");
 		grammarBuilder.append("}\n");

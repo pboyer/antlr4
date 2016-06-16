@@ -46,13 +46,14 @@ public class TestParserErrors extends BaseTest {
 	@Test
 	public void testContextListGetters() throws Exception {
 		mkdir(parserpkgdir);
-		StringBuilder grammarBuilder = new StringBuilder(205);
+		StringBuilder grammarBuilder = new StringBuilder(215);
 		grammarBuilder.append("grammar T;\n");
 		grammarBuilder.append("@parser::members{\n");
 		grammarBuilder.append("func foo() {\n");
-		grammarBuilder.append("	SContext s = null;\n");
-		grammarBuilder.append("	List<? extends AContext> a = s.a();\n");
-		grammarBuilder.append("	List<? extends BContext> b = s.b();\n");
+		grammarBuilder.append("//TODO\n");
+		grammarBuilder.append("//SContext s = null;\n");
+		grammarBuilder.append("//List<? extends AContext> a = s.A();\n");
+		grammarBuilder.append("//List<? extends BContext> b = s.B();\n");
 		grammarBuilder.append("}\n");
 		grammarBuilder.append("}\n");
 		grammarBuilder.append("s : (a | b)+;\n");

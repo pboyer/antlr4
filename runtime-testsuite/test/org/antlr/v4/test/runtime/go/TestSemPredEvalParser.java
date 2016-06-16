@@ -12,7 +12,7 @@ public class TestSemPredEvalParser extends BaseTest {
 	@Test
 	public void test2UnpredicatedAlts() throws Exception {
 		mkdir(parserpkgdir);
-		StringBuilder grammarBuilder = new StringBuilder(300);
+		StringBuilder grammarBuilder = new StringBuilder(299);
 		grammarBuilder.append("grammar T;\n");
 		grammarBuilder.append("s : {p.Interpreter.SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection);} a ';' a; // do 2x: once in ATN, next in DFA\n");
 		grammarBuilder.append("a : ID {fmt.Println(\"alt 1\")}\n");
@@ -42,7 +42,7 @@ public class TestSemPredEvalParser extends BaseTest {
 	@Test
 	public void test2UnpredicatedAltsAndOneOrthogonalAlt() throws Exception {
 		mkdir(parserpkgdir);
-		StringBuilder grammarBuilder = new StringBuilder(351);
+		StringBuilder grammarBuilder = new StringBuilder(350);
 		grammarBuilder.append("grammar T;\n");
 		grammarBuilder.append("s : {p.Interpreter.SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection);} a ';' a ';' a;\n");
 		grammarBuilder.append("a : INT {fmt.Println(\"alt 1\")}\n");
@@ -100,7 +100,7 @@ public class TestSemPredEvalParser extends BaseTest {
 	@Test
 	public void testActionsHidePredsInGlobalFOLLOW() throws Exception {
 		mkdir(parserpkgdir);
-		StringBuilder grammarBuilder = new StringBuilder(279);
+		StringBuilder grammarBuilder = new StringBuilder(275);
 		grammarBuilder.append("grammar T;\n");
 		grammarBuilder.append("@members {\n");
 		grammarBuilder.append("func pred(v bool) bool {\n");
@@ -148,7 +148,7 @@ public class TestSemPredEvalParser extends BaseTest {
 	@Test
 	public void testDepedentPredsInGlobalFOLLOW() throws Exception {
 		mkdir(parserpkgdir);
-		StringBuilder grammarBuilder = new StringBuilder(302);
+		StringBuilder grammarBuilder = new StringBuilder(298);
 		grammarBuilder.append("grammar T;\n");
 		grammarBuilder.append("@members {\n");
 		grammarBuilder.append("func pred(v bool) bool {\n");
@@ -300,7 +300,7 @@ public class TestSemPredEvalParser extends BaseTest {
 		grammarBuilder.append("@after {fmt.Println($ctx.ToStringTree(nil,p))}\n");
 		grammarBuilder.append("  : para para EOF ;\n");
 		grammarBuilder.append("para: paraContent NL NL ;\n");
-		grammarBuilder.append("paraContent : ('s'|'x'|{p.GetTokenStream().LA(2)!=TParserNL}? NL)+ ;\n");
+		grammarBuilder.append("paraContent : ('s'|'x'|{p.GetTokenStream().LA(2)!=TParser.NL}? NL)+ ;\n");
 		grammarBuilder.append("NL : '\\n' ;\n");
 		grammarBuilder.append("s : 's' ;\n");
 		grammarBuilder.append("X : 'x' ;");
@@ -330,7 +330,7 @@ public class TestSemPredEvalParser extends BaseTest {
 		grammarBuilder.append("@after {fmt.Println($ctx.ToStringTree(nil,p))}\n");
 		grammarBuilder.append("  : para para EOF ;\n");
 		grammarBuilder.append("para: paraContent NL NL ;\n");
-		grammarBuilder.append("paraContent : ('s'|'x'|{p.GetTokenStream().LA(2)!=TParserNL}? NL)+ ;\n");
+		grammarBuilder.append("paraContent : ('s'|'x'|{p.GetTokenStream().LA(2)!=TParser.NL}? NL)+ ;\n");
 		grammarBuilder.append("NL : '\\n' ;\n");
 		grammarBuilder.append("s : 's' ;\n");
 		grammarBuilder.append("X : 'x' ;");
@@ -447,7 +447,7 @@ public class TestSemPredEvalParser extends BaseTest {
 	@Test
 	public void testPredsInGlobalFOLLOW() throws Exception {
 		mkdir(parserpkgdir);
-		StringBuilder grammarBuilder = new StringBuilder(273);
+		StringBuilder grammarBuilder = new StringBuilder(269);
 		grammarBuilder.append("grammar T;\n");
 		grammarBuilder.append("@members {\n");
 		grammarBuilder.append("func pred(v bool) bool {\n");

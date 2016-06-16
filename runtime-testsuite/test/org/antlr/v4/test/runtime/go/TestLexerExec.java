@@ -4625,7 +4625,7 @@ public class TestLexerExec extends BaseTest {
 	public void testPositionAdjustingLexer() throws Exception {
 		mkdir(parserpkgdir);
 
-		StringBuilder grammarBuilder = new StringBuilder(3037);
+		StringBuilder grammarBuilder = new StringBuilder(3029);
 		grammarBuilder.append("lexer grammar PositionAdjustingLexer;\n");
 		grammarBuilder.append("\n");
 		grammarBuilder.append("@members {\n");
