@@ -2,21 +2,21 @@
 
 # ANTLR4 Language Target, Runtime for Go
 
-[![Join the chat at https://gitter.im/pboyer/antlr4](https://badges.gitter.im/pboyer/antlr4.svg)](https://gitter.im/pboyer/antlr4?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Build Status](https://travis-ci.org/pboyer/antlr4.svg?branch=master)](https://travis-ci.org/pboyer/antlr4)
+[![Join the chat at https://gitter.im/willfaught/antlr4](https://badges.gitter.im/willfaught/antlr4.svg)](https://gitter.im/willfaught/antlr4?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.org/willfaught/antlr4.svg?branch=master)](https://travis-ci.org/willfaught/antlr4)
 
 ### Usage
 
-1. `go get http://github.com/pboyer/antlr4`
+1. `go get http://github.com/willfaught/antlr4`
 2. Get [StringTemplate](http://www.stringtemplate.org/)
 3. Get [Maven](https://maven.apache.org/download.cgi)
   - Put `mvn` in your PATH (e.g. in `~/.bashrc` add `export PATH=$PATH:/path/to/apache-maven-3.3.9/bin`)
 4. From the repo directory, `mvn install` (add `-DskipTests` to skip the tests)
 5. Put StringTemplate and ANTLR binaries on your `CLASSPATH`
   - `export CLASSPATH=".:/path/to/ST-4.0.8.jar:$CLASSPATH"`
-  - `export CLASSPATH=".:$GOPATH/src/github.com/pboyer/antlr4/tool/target/antlr4-4.5.2-SNAPSHOT.jar:$CLASSPATH"`
+  - `export CLASSPATH=".:$GOPATH/src/github.com/willfaught/antlr4/tool/target/antlr4-4.5.2-SNAPSHOT.jar:$CLASSPATH"`
 5. (Optional) Add an alias for calling antlr
-  - `alias antlr='java -jar $GOPATH/src/github.com/pboyer/antlr4/tool/target/antlr4-4.5.2-SNAPSHOT.jar'`
+  - `alias antlr='java -jar $GOPATH/src/github.com/willfaught/antlr4/tool/target/antlr4-4.5.2-SNAPSHOT.jar'`
 6. Now, `antlr Grammar.g4 -Dlanguage=Go`
 
 ---
