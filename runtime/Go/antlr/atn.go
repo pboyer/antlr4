@@ -132,6 +132,7 @@ func (a *ATN) getExpectedTokens(stateNumber int, ctx RuleContext) *IntervalSet {
 		panic("Invalid state number.")
 	}
 
+      ctx := context
 	var s = a.states[stateNumber]
 	var following = a.NextTokens(s, nil)
 
