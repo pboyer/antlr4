@@ -127,12 +127,12 @@ func (a *ATN) getDecisionState(decision int) DecisionState {
 // A nil ctx defaults to ParserRuleContext.EMPTY.
 //
 // It panics if the ATN does not contain state stateNumber.
-func (a *ATN) getExpectedTokens(stateNumber int, ctx RuleContext) *IntervalSet {
+func (a *ATN) getExpectedTokens(stateNumber int, context RuleContext) *IntervalSet {
 	if stateNumber < 0 || stateNumber >= len(a.states) {
 		panic("Invalid state number.")
 	}
 
-      ctx := context
+        ctx := context
 	var s = a.states[stateNumber]
 	var following = a.NextTokens(s, nil)
 
