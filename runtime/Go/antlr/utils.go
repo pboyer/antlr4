@@ -6,9 +6,7 @@ import (
 	"hash/fnv"
 	"sort"
 	"strings"
-	//	"regexp"
-	//	"bytes"
-	//	"encoding/gob"
+	"bytes"
 	"strconv"
 )
 
@@ -341,6 +339,25 @@ func EscapeWhitespace(s string, escapeSpaces bool) string {
 		s = strings.Replace(s, " ", "\u00B7", -1)
 	}
 	return s
+}
+
+// Prints a Java style string array
+
+func PrintJavaStringArray(sa []string) string {
+	var buffer bytes.Buffer
+
+	buffer.WriteString("[")
+
+	for i, s := range sa {
+		buffer.WriteString(s)
+		if i != len(sa)-1 {
+			buffer.WriteString(", ")
+		}
+	}
+
+	buffer.WriteString("]")
+
+	return buffer.String()
 }
 
 func TitleCase(str string) string {
