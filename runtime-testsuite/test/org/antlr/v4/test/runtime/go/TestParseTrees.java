@@ -204,7 +204,7 @@ public class TestParseTrees extends BaseTest {
 		grammarBuilder.append("}\n");
 		grammarBuilder.append("  : r=a ;\n");
 		grammarBuilder.append("a : 'x' { \n");
-		grammarBuilder.append("fmt.Println(antlr.PrintJavaStringArray(p.GetRuleInvocationStack(nil)))\n");
+		grammarBuilder.append("fmt.Println(antlr.PrintArrayJavaStyle(p.GetRuleInvocationStack(nil)))\n");
 		grammarBuilder.append("} ;");
 		String grammar = grammarBuilder.toString();
 		String input ="x";

@@ -341,9 +341,17 @@ func EscapeWhitespace(s string, escapeSpaces bool) string {
 	return s
 }
 
-// Prints a Java style string array
+func TerminalNodeToStringArray(sa []TerminalNode) []string {
+	st := make([]string, len(sa))
 
-func PrintJavaStringArray(sa []string) string {
+	for i, s := range sa {
+		st[i] = fmt.Sprintf("%v", s)
+	}
+
+	return st
+}
+
+func PrintArrayJavaStyle(sa []string) string {
 	var buffer bytes.Buffer
 
 	buffer.WriteString("[")

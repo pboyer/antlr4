@@ -301,7 +301,7 @@ public class TestListeners extends BaseTest {
 		grammarBuilder.append("\n");
 		grammarBuilder.append("func (*LeafListener) ExitA(ctx *AContext) {\n");
 		grammarBuilder.append("	if ctx.GetChildCount() == 2 {\n");
-		grammarBuilder.append("		fmt.Printf(\"%s %s %s\", ctx.INT(0).GetSymbol().GetText(), ctx.INT(1).GetSymbol().GetText(), antlr.PrintJavaStringArray(ctx.AllINT()))\n");
+		grammarBuilder.append("		fmt.Printf(\"%s %s %s\", ctx.INT(0).GetSymbol().GetText(), ctx.INT(1).GetSymbol().GetText(), antlr.PrintArrayJavaStyle(ctx.AllINT()))\n");
 		grammarBuilder.append("	} else {\n");
 		grammarBuilder.append("		fmt.Println(ctx.ID().GetSymbol())\n");
 		grammarBuilder.append("	}\n");
@@ -354,7 +354,7 @@ public class TestListeners extends BaseTest {
 		grammarBuilder.append("\n");
 		grammarBuilder.append("func (*LeafListener) ExitA(ctx *AContext) {\n");
 		grammarBuilder.append("	if ctx.GetChildCount() == 2 {\n");
-		grammarBuilder.append("		fmt.Printf(\"%s %s %s\", ctx.INT(0).GetSymbol().GetText(), ctx.INT(1).GetSymbol().GetText(), antlr.PrintJavaStringArray(ctx.AllINT()))\n");
+		grammarBuilder.append("		fmt.Printf(\"%s %s %s\", ctx.INT(0).GetSymbol().GetText(), ctx.INT(1).GetSymbol().GetText(), antlr.PrintArrayJavaStyle(ctx.AllINT()))\n");
 		grammarBuilder.append("	} else {\n");
 		grammarBuilder.append("		fmt.Println(ctx.ID().GetSymbol())\n");
 		grammarBuilder.append("	}\n");
