@@ -193,7 +193,7 @@ public class TestParseTrees extends BaseTest {
 	@Test
 	public void testTokenAndRuleContextString() throws Exception {
 		mkdir(parserpkgdir);
-		StringBuilder grammarBuilder = new StringBuilder(195);
+		StringBuilder grammarBuilder = new StringBuilder(194);
 		grammarBuilder.append("grammar T;\n");
 		grammarBuilder.append("s\n");
 		grammarBuilder.append("@init {\n");
