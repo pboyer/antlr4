@@ -383,7 +383,7 @@ func merge(a, b PredictionContext, rootIsWildcard bool, mergeCache *DoubleDict) 
 	}
 
 	ac, ok1 := a.(*BaseSingletonPredictionContext)
-	bc, ok2 := a.(*BaseSingletonPredictionContext)
+	bc, ok2 := b.(*BaseSingletonPredictionContext)
 
 	if ok1 && ok2 {
 		return mergeSingletons(ac, bc, rootIsWildcard, mergeCache)
