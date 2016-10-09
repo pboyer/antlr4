@@ -14,7 +14,6 @@ type ParserATNSimulator struct {
 	input          TokenStream
 	startIndex     int
 	dfa            *DFA
-	DecisionToDFA  []*DFA
 	mergeCache     *DoubleDict
 	outerContext   ParserRuleContext
 }
@@ -26,7 +25,7 @@ func NewParserATNSimulator(parser Parser, atn *ATN, decisionToDFA []*DFA, shared
 	p.BaseATNSimulator = NewBaseATNSimulator(atn, sharedContextCache)
 
 	p.parser = parser
-	p.DecisionToDFA = decisionToDFA
+	p.decisionToDFA = decisionToDFA
 	// SLL, LL, or LL + exact ambig detection?//
 	p.predictionMode = PredictionModeLL
 	// LAME globals to avoid parameters!!!!! I need these down deep in predTransition
@@ -81,7 +80,7 @@ func (p *ParserATNSimulator) AdaptivePredict(input TokenStream, decision int, ou
 	p.startIndex = input.Index()
 	p.outerContext = outerContext
 
-	var dfa = p.DecisionToDFA[decision]
+	var dfa = p.decisionToDFA[decision]
 	p.dfa = dfa
 	var m = input.Mark()
 	var index = input.Index()
@@ -196,7 +195,7 @@ func (p *ParserATNSimulator) execATN(dfa *DFA, s0 *DFAState, input TokenStream, 
 		fmt.Println("s0 = " + s0.String())
 	}
 	var t = input.LA(1)
-	for true { // for more work
+	for { // for more work
 		var D = p.getExistingTargetState(previousD, t)
 		if D == nil {
 			D = p.computeTargetState(dfa, previousD, t)
@@ -391,7 +390,7 @@ func (p *ParserATNSimulator) execATNWithFullContext(dfa *DFA, D *DFAState, s0 AT
 	var t = input.LA(1)
 	var predictedAlt = -1
 
-	for true { // for more work
+	for { // for more work
 		reach = p.computeReachSet(previous, t, fullCtx)
 		if reach == nil {
 			// if any configs in previous dipped into outer context, that

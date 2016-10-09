@@ -307,8 +307,10 @@ LexerATNSimulator.prototype.computeTargetState = function(input, s, t) {
 LexerATNSimulator.prototype.failOrAccept = function(prevAccept, input, reach, t) {
 
 	if (this.prevAccept.dfaState !== null) {
-
 		var lexerActionExecutor = prevAccept.dfaState.lexerActionExecutor;
+		if (PORT_DEBUG) {
+			console.log(prevAccept.dfaState.toString())
+		}
 		this.accept(input, lexerActionExecutor, this.startIndex,
 				prevAccept.index, prevAccept.line, prevAccept.column);
 
