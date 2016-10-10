@@ -15,6 +15,8 @@ type Lexer interface {
 	TokenSource
 	Recognizer
 
+	Emit() Token
+
 	setChannel(int)
 	pushMode(int)
 	popMode() int
@@ -30,6 +32,7 @@ type BaseLexer struct {
 	TokenStartLine      int
 	TokenStartColumn    int
 	ActionType          int
+	Virt                Lexer // The most derived lexer implementation. Allows virtual method calls.
 
 	input                  CharStream
 	factory                TokenFactory
@@ -52,6 +55,8 @@ func NewBaseLexer(input CharStream) *BaseLexer {
 	lexer.input = input
 	lexer.factory = CommonTokenFactoryDEFAULT
 	lexer.tokenFactorySourcePair = &TokenSourceCharStreamPair{lexer, input}
+
+	lexer.Virt = lexer
 
 	lexer.Interpreter = nil // child classes must populate it
 
@@ -240,7 +245,7 @@ func (b *BaseLexer) NextToken() Token {
 			continue
 		}
 		if b.token == nil {
-			b.Emit()
+			b.Virt.Emit()
 		}
 		return b.token
 	}
@@ -318,7 +323,7 @@ func (b *BaseLexer) EmitToken(token Token) {
 // /
 func (b *BaseLexer) Emit() Token {
 	if PortDebug {
-		fmt.Println("emit")
+		fmt.Println("emit base lexer")
 	}
 	var t = b.factory.Create(b.tokenFactorySourcePair, b.thetype, b.text, b.channel, b.TokenStartCharIndex, b.GetCharIndex()-1, b.TokenStartLine, b.TokenStartColumn)
 	b.EmitToken(t)
@@ -382,14 +387,15 @@ func (b *BaseLexer) getAllTokens() []Token {
 	if PortDebug {
 		fmt.Println("getAllTokens")
 	}
+	var vl = b.Virt
 	var tokens = make([]Token, 0)
-	var t = b.NextToken()
+	var t = vl.NextToken()
 	for t.GetTokenType() != TokenEOF {
 		tokens = append(tokens, t)
 		if PortDebug {
 			fmt.Println("getAllTokens")
 		}
-		t = b.NextToken()
+		t = vl.NextToken()
 	}
 	return tokens
 }

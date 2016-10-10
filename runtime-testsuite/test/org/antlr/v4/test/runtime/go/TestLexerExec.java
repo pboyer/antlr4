@@ -4625,13 +4625,14 @@ public class TestLexerExec extends BaseTest {
 	public void testPositionAdjustingLexer() throws Exception {
 		mkdir(parserpkgdir);
 
-		StringBuilder grammarBuilder = new StringBuilder(2679);
+		StringBuilder grammarBuilder = new StringBuilder(2692);
 		grammarBuilder.append("lexer grammar PositionAdjustingLexer;\n");
 		grammarBuilder.append("\n");
 		grammarBuilder.append("@members {\n");
 		grammarBuilder.append("func (p *PositionAdjustingLexer) NextToken() antlr.Token {\n");
 		grammarBuilder.append("	if _, ok := p.Interpreter.(*PositionAdjustingLexerATNSimulator); !ok {\n");
 		grammarBuilder.append("		p.Interpreter = NewPositionAdjustingLexerATNSimulator(p, lexerAtn, p.Interpreter.DecisionToDFA(), p.Interpreter.SharedContextCache())\n");
+		grammarBuilder.append("		p.Virt = p\n");
 		grammarBuilder.append("	}\n");
 		grammarBuilder.append("\n");
 		grammarBuilder.append("	return p.BaseLexer.NextToken()\n");

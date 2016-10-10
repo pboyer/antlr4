@@ -172,12 +172,15 @@ Lexer.prototype.nextToken = function() {
 				}
 				if (this._type === Lexer.SKIP) {
 					if (PORT_DEBUG) {
-						console.log("lex inner loop")
+						console.log("skip")
 					}
 					continueOuter = true;
 					break;
 				}
 				if (this._type !== Lexer.MORE) {
+					if (PORT_DEBUG) {
+						console.log("no more")
+					}
 					break;
 				}
 

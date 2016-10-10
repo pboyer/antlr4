@@ -242,6 +242,7 @@ PositionAdjustingLexer() ::= <<
 func (p *PositionAdjustingLexer) NextToken() antlr.Token {
 	if _, ok := p.Interpreter.(*PositionAdjustingLexerATNSimulator); !ok {
 		p.Interpreter = NewPositionAdjustingLexerATNSimulator(p, lexerAtn, p.Interpreter.DecisionToDFA(), p.Interpreter.SharedContextCache())
+		p.Virt = p
 	}
 
 	return p.BaseLexer.NextToken()

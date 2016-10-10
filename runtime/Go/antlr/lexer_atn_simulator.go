@@ -100,6 +100,7 @@ func (l *LexerATNSimulator) Match(input CharStream, mode int) int {
 
 	if PortDebug {
 		fmt.Println("execATN")
+		fmt.Println("mode", mode, len(l.decisionToDFA[0].s0.edges))
 	}
 
 	return l.execATN(input, dfa.s0)
@@ -150,6 +151,15 @@ func (l *LexerATNSimulator) execATN(input CharStream, ds0 *DFAState) int {
 	var t = input.LA(1)
 	var s = ds0 // s is current/from DFA state
 
+	if PortDebug {
+		fs,ok := input.(*FileStream)
+		if ok {
+			fmt.Println("enter execATN", t, len(s.edges), fs.index, fs.size)
+		} else {
+			fmt.Println("enter execATN", t, len(s.edges))
+		}
+	}
+
 	for { // while more work
 		if LexerATNSimulatorDebug {
 			fmt.Println("execATN loop starting closure: " + s.configs.String())
@@ -172,11 +182,11 @@ func (l *LexerATNSimulator) execATN(input CharStream, ds0 *DFAState) int {
 		// This optimization makes a lot of sense for loops within DFA.
 		// A character will take us back to an existing DFA state
 		// that already has lots of edges out of it. e.g., .* in comments.
-		// print("Target for:" + str(s) + " and:" + str(t))
 		var target = l.getExistingTargetState(s, t)
-		//		if PortDebug {
-		//			fmt.Println(target)
-		//		}
+		if PortDebug {
+			fmt.Println(t)
+			fmt.Println(target != nil)
+		}
 		if target == nil {
 			target = l.computeTargetState(input, s, t)
 			// print("Computed:" + str(target))
@@ -189,6 +199,9 @@ func (l *LexerATNSimulator) execATN(input CharStream, ds0 *DFAState) int {
 		// position accurately reflect the state of the interpreter at the
 		// end of the token.
 		if t != TokenEOF {
+			if PortDebug {
+				fmt.Println("consume", t, TokenEOF)
+			}
 			l.Consume(input)
 		}
 		if target.isAcceptState {
@@ -222,9 +235,10 @@ func (l *LexerATNSimulator) getExistingTargetState(s *DFAState, t int) *DFAState
 	}
 
 	var target = s.edges[t-LexerATNSimulatorMinDFAEdge]
-	if target == nil {
-		target = nil
+	if PortDebug {
+		fmt.Println("len edges", len(s.edges), t, t-LexerATNSimulatorMinDFAEdge)
 	}
+
 	if LexerATNSimulatorDebug && target != nil {
 		fmt.Println("reuse state " + strconv.Itoa(s.stateNumber) + " edge to " + strconv.Itoa(target.stateNumber))
 	}
@@ -292,6 +306,7 @@ func (l *LexerATNSimulator) getReachableConfigSet(input CharStream, closure ATNC
 	var SkipAlt = ATNInvalidAltNumber
 
 	if PortDebug {
+		fmt.Println("getReachableConfigSet")
 		fmt.Println("CLOSURE SIZE" + strconv.Itoa(len(closure.GetItems())))
 	}
 
@@ -543,6 +558,9 @@ func (l *LexerATNSimulator) evaluatePredicate(input CharStream, ruleIndex, predI
 		input.Release(marker)
 	}()
 
+	if PortDebug {
+		fmt.Println("evalPred")
+	}
 	l.Consume(input)
 	return l.recog.Sempred(nil, ruleIndex, predIndex)
 }
@@ -641,6 +659,9 @@ func (l *LexerATNSimulator) GetText(input CharStream) string {
 }
 
 func (l *LexerATNSimulator) Consume(input CharStream) {
+	if PortDebug {
+		fmt.Println("consume", input.Index(), input.Size())
+	}
 	var curChar = input.LA(1)
 	if curChar == int('\n') {
 		l.Line++
