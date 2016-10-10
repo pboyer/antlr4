@@ -1,4 +1,4 @@
-PORT_DEBUG = false; // TODO(pboyer) remove
+PORT_DEBUG = true; // TODO(pboyer) remove
 
 exports.atn = require('./atn/index');
 exports.dfa = require('./dfa/index');

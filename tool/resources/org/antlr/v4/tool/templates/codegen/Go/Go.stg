@@ -19,11 +19,6 @@ import (
 	"github.com/pboyer/antlr4/runtime/Go/antlr"
 )
 
-<if(namedActions.header)>
-
-<namedActions.header>
-<endif>
-
 // Suppress unused import errors
 var _ = fmt.Printf
 var _ = reflect.Copy
@@ -211,10 +206,6 @@ func New<parser.name>(input antlr.TokenStream) *<parser.name> {
 
 	return this
 }
-<if(namedActions.members)>
-
-<namedActions.members>
-<endif>
 
 <if(parser.tokens)>
 
@@ -1338,10 +1329,8 @@ import (
 
 	"github.com/pboyer/antlr4/runtime/Go/antlr"
 )
-<if(namedActions.header)>
 
 <namedActions.header>
-<endif>
 
 // Suppress unused import error
 var _ = fmt.Printf
@@ -1452,10 +1441,8 @@ const (
 // <lexer.name><first(rest(lexer.modes))> is the <lexer.name> mode.
 const <lexer.name><first(rest(lexer.modes))> = 1
 <endif>
-<if(namedActions.members)>
 
 <namedActions.members>
-<endif>
 
 <dumpActions(lexer, "", actionFuncs, sempredFuncs)>
 >>
