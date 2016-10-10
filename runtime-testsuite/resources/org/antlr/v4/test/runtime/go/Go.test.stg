@@ -231,7 +231,7 @@ Production(p) ::= <%<p; format="cap">%>
 Result(r) ::= <%Get<r; format="cap">()%>
 
 ParserPropertyMember() ::= <<
-@members {
+@parser::members {
 func Property() bool {
 	return true
 }
