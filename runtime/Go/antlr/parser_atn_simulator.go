@@ -135,7 +135,13 @@ func (p *ParserATNSimulator) AdaptivePredict(input TokenStream, decision int, ou
 			// appropriate start state for the precedence level rather
 			// than simply setting DFA.s0.
 			//
+			if PortDebug {
+				fmt.Println("precfilter", s0Closure)
+			}
 			s0Closure = p.applyPrecedenceFilter(s0Closure)
+			if PortDebug {
+				fmt.Println("precfilter", s0Closure)
+			}
 			s0 = p.addDFAState(dfa, NewDFAState(-1, s0Closure))
 			dfa.setPrecedenceStartState(p.parser.GetPrecedence(), s0)
 		} else {
@@ -736,9 +742,18 @@ func (p *ParserATNSimulator) applyPrecedenceFilter(configs ATNConfigSet) ATNConf
 	var statesFromAlt1 = make(map[int]PredictionContext)
 	var configSet = NewBaseATNConfigSet(configs.FullContext())
 
+	if PortDebug {
+		fmt.Println("len", len(configs.GetItems()))
+		for _, config := range configs.GetItems() {
+			fmt.Println(config.getPrecedenceFilterSuppressed())
+		}
+	}
 	for _, config := range configs.GetItems() {
 		// handle alt 1 first
 		if config.GetAlt() != 1 {
+			if PortDebug {
+				fmt.Println("getalt1")
+			}
 			continue
 		}
 		var updatedContext = config.GetSemanticContext().evalPrecedence(p.parser, p.outerContext)
@@ -748,25 +763,41 @@ func (p *ParserATNSimulator) applyPrecedenceFilter(configs ATNConfigSet) ATNConf
 		}
 		statesFromAlt1[config.GetState().GetStateNumber()] = config.GetContext()
 		if updatedContext != config.GetSemanticContext() {
+			if PortDebug {
+				fmt.Println("add1")
+			}
 			configSet.Add(NewBaseATNConfig2(config, updatedContext), p.mergeCache)
 		} else {
+			if PortDebug {
+				fmt.Println("add2")
+			}
 			configSet.Add(config, p.mergeCache)
 		}
 	}
 	for _, config := range configs.GetItems() {
+
 		if config.GetAlt() == 1 {
 			// already handled
+			if PortDebug {
+				fmt.Println("getalt2")
+			}
 			continue
 		}
 		// In the future, p elimination step could be updated to also
 		// filter the prediction context for alternatives predicting alt>1
 		// (basically a graph subtraction algorithm).
 		if !config.getPrecedenceFilterSuppressed() {
+			if PortDebug {
+				fmt.Println("!getPrecedenceFilterSuppressed")
+			}
 			var context = statesFromAlt1[config.GetState().GetStateNumber()]
 			if context != nil && context.equals(config.GetContext()) {
 				// eliminated
 				continue
 			}
+		}
+		if PortDebug {
+			fmt.Println("add3", config.getPrecedenceFilterSuppressed())
 		}
 		configSet.Add(config, p.mergeCache)
 	}
@@ -1072,7 +1103,7 @@ func (p *ParserATNSimulator) closureWork(config ATNConfig, configs ATNConfigSet,
 
 				if PortDebug {
 					fmt.Println("DEBUG 2")
-					fmt.Println(closureBusy)
+					fmt.Println(closureBusy.String())
 				}
 				// target fell off end of rule mark resulting c as having dipped into outer context
 				// We can't get here if incoming config was rule stop and we had context
@@ -1082,7 +1113,7 @@ func (p *ParserATNSimulator) closureWork(config ATNConfig, configs ATNConfigSet,
 
 				if closureBusy.add(c) != c {
 					if PortDebug {
-						fmt.Println("DEBUG 3")
+						fmt.Println("DEBUG 3", i, len(state.GetTransitions()))
 					}
 					// avoid infinite recursion for right-recursive rules
 					continue
@@ -1098,6 +1129,9 @@ func (p *ParserATNSimulator) closureWork(config ATNConfig, configs ATNConfigSet,
 						fmt.Println("DEBUG 4")
 					}
 					if t.(*EpsilonTransition).outermostPrecedenceReturn == p.dfa.atnStartState.GetRuleIndex() {
+						if PortDebug {
+							fmt.Println("setPrecedenceFilterSuppressed")
+						}
 						c.setPrecedenceFilterSuppressed(true)
 					}
 				}
@@ -1114,8 +1148,14 @@ func (p *ParserATNSimulator) closureWork(config ATNConfig, configs ATNConfigSet,
 					newDepth++
 				}
 			}
+			if PortDebug {
+				fmt.Println("closureCheckingStopState")
+			}
 			p.closureCheckingStopState(c, configs, closureBusy, continueCollecting, fullCtx, newDepth, treatEOFAsEpsilon)
 		}
+	}
+	if PortDebug {
+		fmt.Println("closureWork done")
 	}
 }
 
