@@ -1613,7 +1613,7 @@ ParserATNSimulator.prototype.getTokenName = function( t) {
 ParserATNSimulator.prototype.getLookaheadName = function(input) {
     return this.getTokenName(input.LA(1));
 };
-``
+
 // Used for debugging in adaptivePredict around execATN but I cut
 //  it out for clarity now that alg. works well. We can leave this
 //  "dead" code for a bit.
