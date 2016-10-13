@@ -232,7 +232,7 @@ Result(r) ::= <%Get<r; format="cap">()%>
 
 ParserPropertyMember() ::= <<
 @parser::members {
-func Property() bool {
+func (p *TParser) Property() bool {
 	return true
 }
 }
