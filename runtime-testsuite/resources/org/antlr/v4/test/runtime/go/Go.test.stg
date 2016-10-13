@@ -314,6 +314,32 @@ func (p *PositionAdjustingLexerATNSimulator) ResetAcceptPosition(input antlr.Cha
 
 >>
 
+TreeNodeWithAltNumField(X) ::= <<
+@parser::members {
+
+type MyRuleNode struct {
+	*antlr.BaseParserRuleContext
+
+	altNum int
+}
+
+func NewMyRuleNode(parent antlr.ParserRuleContext, invokingStateNumber int) *MyRuleNode {
+	return &MyRuleNode{
+		BaseParserRuleContext : antlr.NewBaseParserRuleContext(parent, invokingStateNumber),
+	}
+}
+
+func (m *MyRuleNode) GetAltNumber() int {
+	return m.altNum
+}
+
+func (m *MyRuleNode) SetAltNumber(altNum int) {
+	m.altNum = altNum
+}
+
+}
+>>
+
 BasicListener(notused) ::= <<
 type LeafListener struct {
 	*BaseTListener

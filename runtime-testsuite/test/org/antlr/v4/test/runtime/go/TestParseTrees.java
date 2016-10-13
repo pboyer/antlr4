@@ -60,11 +60,34 @@ public class TestParseTrees extends BaseTest {
 	@Test
 	public void testAltNum() throws Exception {
 		mkdir(parserpkgdir);
-		StringBuilder grammarBuilder = new StringBuilder(211);
+		StringBuilder grammarBuilder = new StringBuilder(640);
 		grammarBuilder.append("grammar T;\n");
 		grammarBuilder.append("\n");
 		grammarBuilder.append("options { contextSuperClass=MyRuleNode; }\n");
 		grammarBuilder.append("\n");
+		grammarBuilder.append("@parser::members {\n");
+		grammarBuilder.append("\n");
+		grammarBuilder.append("type MyRuleNode struct {\n");
+		grammarBuilder.append("	*antlr.BaseParserRuleContext\n");
+		grammarBuilder.append("\n");
+		grammarBuilder.append("	altNum int\n");
+		grammarBuilder.append("}\n");
+		grammarBuilder.append("\n");
+		grammarBuilder.append("func NewMyRuleNode(parent antlr.ParserRuleContext, invokingStateNumber int) *MyRuleNode {\n");
+		grammarBuilder.append("	return &MyRuleNode{\n");
+		grammarBuilder.append("		BaseParserRuleContext : antlr.NewBaseParserRuleContext(parent, invokingStateNumber),\n");
+		grammarBuilder.append("	}\n");
+		grammarBuilder.append("}\n");
+		grammarBuilder.append("\n");
+		grammarBuilder.append("func (m *MyRuleNode) GetAltNumber() int {\n");
+		grammarBuilder.append("	return m.altNum\n");
+		grammarBuilder.append("}\n");
+		grammarBuilder.append("\n");
+		grammarBuilder.append("func (m *MyRuleNode) SetAltNumber(altNum int) {\n");
+		grammarBuilder.append("	m.altNum = altNum\n");
+		grammarBuilder.append("}\n");
+		grammarBuilder.append("\n");
+		grammarBuilder.append("}\n");
 		grammarBuilder.append("\n");
 		grammarBuilder.append("\n");
 		grammarBuilder.append("s\n");
