@@ -42,7 +42,7 @@ function LexerActionExecutor(lexerActions) {
 	this.lexerActions = lexerActions === null ? [] : lexerActions;
 	// Caches the result of {@link //hashCode} since the hash code is an element
 	// of the performance-critical {@link LexerATNConfig//hashCode} operation.
-	this.hashString = lexerActions.toString(); // "".join([str(la) for la in
+	this._hashString = lexerActions.toString(); // "".join([str(la) for la in
 	// lexerActions]))
 	return this;
 }
@@ -134,19 +134,33 @@ LexerActionExecutor.prototype.fixOffsetBeforeMatch = function(offset) {
 // of the token.
 // /
 LexerActionExecutor.prototype.execute = function(lexer, input, startIndex) {
+	if (PORT_DEBUG) {
+		console.log("execute");
+		console.log("len(lexerActions)",this.lexerActions.length);
+	}
 	var requiresSeek = false;
 	var stopIndex = input.index;
 	try {
 		for (var i = 0; i < this.lexerActions.length; i++) {
 			var lexerAction = this.lexerActions[i];
 			if (lexerAction instanceof LexerIndexedCustomAction) {
+				if (PORT_DEBUG) {
+            		console.log("LexerIndexedCustomAction");
+            	}
 				var offset = lexerAction.offset;
 				input.seek(startIndex + offset);
 				lexerAction = lexerAction.action;
 				requiresSeek = (startIndex + offset) !== stopIndex;
 			} else if (lexerAction.isPositionDependent) {
+				if (PORT_DEBUG) {
+					console.log("posDep");
+				}
 				input.seek(stopIndex);
 				requiresSeek = false;
+			}
+			if (PORT_DEBUG) {
+				console.log("exec");
+				console.log(lexerAction.toString());
 			}
 			lexerAction.execute(lexer);
 		}
@@ -158,7 +172,7 @@ LexerActionExecutor.prototype.execute = function(lexer, input, startIndex) {
 };
 
 LexerActionExecutor.prototype.hashString = function() {
-	return this.hashString;
+	return this._hashString;
 };
 
 LexerActionExecutor.prototype.equals = function(other) {
@@ -166,9 +180,18 @@ LexerActionExecutor.prototype.equals = function(other) {
 		return true;
 	} else if (!(other instanceof LexerActionExecutor)) {
 		return false;
+	} else if (this._hashString != other._hashString) {
+		return false;
+	} else if (this.lexerActions.length != other.lexerActions.length) {
+		return false;
 	} else {
-		return this.hashString === other.hashString &&
-				this.lexerActions === other.lexerActions;
+		var numActions = this.lexerActions.length
+		for (var idx = 0; idx < numActions; ++idx) {
+			if (!this.lexerActions[idx].equals(other.lexerActions[idx])) {
+				return false;
+			}
+		}
+		return true;
 	}
 };
 

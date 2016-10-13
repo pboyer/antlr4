@@ -45,7 +45,7 @@ Recognizer.ruleIndexMapCache = {};
 
 
 Recognizer.prototype.checkVersion = function(toolVersion) {
-    var runtimeVersion = "4.5.1";
+    var runtimeVersion = "4.5.3";
     if (runtimeVersion!==toolVersion) {
         console.log("ANTLR runtime and generated code versions disagree: "+runtimeVersion+"!="+toolVersion);
     }
@@ -165,7 +165,7 @@ Object.defineProperty(Recognizer.prototype, "state", {
 	},
 	set : function(state) {
 	    if (PORT_DEBUG) {
-	        console.log("SETTING STATE" + state + " from " + this._stateNumber )
+	        console.log("SETTING STATE " + state + " from " + this._stateNumber )
 	    }
 		this._stateNumber = state;
 	}
