@@ -220,7 +220,7 @@ ImportListener(X) ::= ""
 
 GetExpectedTokenNames() ::= "p.GetExpectedTokens().StringVerbose(p.GetTokenNames(), nil, false)"
 
-RuleInvocationStack() ::= "antlr.PrintJavaStringArray(p.GetRuleInvocationStack(nil))"
+RuleInvocationStack() ::= "antlr.PrintArrayJavaStyle(p.GetRuleInvocationStack(nil))"
 
 LL_EXACT_AMBIG_DETECTION() ::= <<p.Interpreter.SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection);>>
 
