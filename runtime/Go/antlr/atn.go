@@ -1,5 +1,10 @@
 package antlr
 
+import "fmt"
+
+// PortDebug prints debug information to standard out when true. TODO: Remove.
+const PortDebug = false
+
 var ATNInvalidAltNumber int
 
 type ATN struct {
@@ -56,7 +61,16 @@ func (a *ATN) NextTokensInContext(s ATNState, ctx RuleContext) *IntervalSet {
 // rule.
 func (a *ATN) NextTokensNoContext(s ATNState) *IntervalSet {
 	if s.GetNextTokenWithinRule() != nil {
+		if PortDebug {
+			fmt.Println("DEBUG A")
+		}
+
 		return s.GetNextTokenWithinRule()
+	}
+
+	if PortDebug {
+		fmt.Println("DEBUG 2")
+		fmt.Println(a.NextTokensInContext(s, nil))
 	}
 
 	s.SetNextTokenWithinRule(a.NextTokensInContext(s, nil))

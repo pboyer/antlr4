@@ -91,11 +91,19 @@ func (c *CommonTokenStream) Consume() {
 		SkipEOFCheck = false
 	}
 
+	if PortDebug {
+		fmt.Println("Consume 1")
+	}
+
 	if !SkipEOFCheck && c.LA(1) == TokenEOF {
 		panic("cannot consume EOF")
 	}
 
 	if c.Sync(c.index + 1) {
+		if PortDebug {
+			fmt.Println("Consume 2")
+		}
+
 		c.index = c.adjustSeekIndex(c.index + 1)
 	}
 }
@@ -107,6 +115,11 @@ func (c *CommonTokenStream) Sync(i int) bool {
 
 	if n > 0 {
 		fetched := c.fetch(n)
+
+		if PortDebug {
+			fmt.Println("Sync done")
+		}
+
 		return fetched >= n
 	}
 
@@ -123,6 +136,10 @@ func (c *CommonTokenStream) fetch(n int) int {
 	for i := 0; i < n; i++ {
 		t := c.tokenSource.NextToken()
 
+		if PortDebug {
+			fmt.Println("fetch loop")
+		}
+
 		t.SetTokenIndex(len(c.tokens))
 		c.tokens = append(c.tokens, t)
 
@@ -131,6 +148,10 @@ func (c *CommonTokenStream) fetch(n int) int {
 
 			return i + 1
 		}
+	}
+
+	if PortDebug {
+		fmt.Println("fetch done")
 	}
 
 	return n
