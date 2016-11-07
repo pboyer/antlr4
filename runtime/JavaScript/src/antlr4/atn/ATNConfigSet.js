@@ -41,17 +41,19 @@ var SemanticContext = require('./SemanticContext').SemanticContext;
 var merge = require('./../PredictionContext').merge;
 
 function hashATNConfig(c) {
-	return c.hashStringForConfigSet();
+	return c.shortHashString();
 }
 
 function equalATNConfigs(a, b) {
 	if ( a===b ) {
 		return true;
-	} else if ( a===null || b===null ) {
+	}
+	if ( a===null || b===null ) {
 		return false;
-	} else
-       return a.equalsForConfigSet(b);
- }
+	}
+	return a.state.stateNumber===b.state.stateNumber &&
+		a.alt===b.alt && a.semanticContext.equals(b.semanticContext);
+}
 
 
 function ATNConfigSet(fullCtx) {
@@ -153,7 +155,7 @@ ATNConfigSet.prototype.getPredicates = function() {
 	for (var i = 0; i < this.configs.length; i++) {
 		var c = this.configs[i].semanticContext;
 		if (c !== SemanticContext.NONE) {
-			preds.push(c.semanticContext);
+			preds.push(c);
 		}
 	}
 	return preds;
@@ -239,7 +241,7 @@ ATNConfigSet.prototype.containsFast = function(item) {
 	if (this.configLookup === null) {
 		throw "This method is not implemented for readonly sets.";
 	}
-	return this.configLookup.containsFast(item);
+	return this.configLookup.contains(item);
 };
 
 ATNConfigSet.prototype.clear = function() {
