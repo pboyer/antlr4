@@ -1,5 +1,9 @@
 package antlr
 
+import (
+	"fmt"
+)
+
 type LL1Analyzer struct {
 	atn *ATN
 }

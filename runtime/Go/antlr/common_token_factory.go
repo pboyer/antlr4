@@ -1,5 +1,7 @@
 package antlr
 
+import "fmt"
+
 // TokenFactory creates CommonToken objects.
 type TokenFactory interface {
 	Create(source *TokenSourceCharStreamPair, ttype int, text string, channel, start, stop, line, column int) Token

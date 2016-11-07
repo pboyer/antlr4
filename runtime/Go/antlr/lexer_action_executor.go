@@ -1,5 +1,9 @@
 package antlr
 
+import (
+	"fmt"
+)
+
 // Represents an executor for a sequence of lexer actions which traversed during
 // the Matching operation of a lexer rule (token).
 //
