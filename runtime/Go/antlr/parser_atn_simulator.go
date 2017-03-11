@@ -778,11 +778,11 @@ func (p *ParserATNSimulator) getReachableTarget(trans Transition, ttype int) ATN
 	return nil
 }
 
-func (p *ParserATNSimulator) getPredsForAmbigAlts(ambigAlts *bitSet, configs ATNConfigSet, nalts int) []SemanticContext {
+func (p *ParserATNSimulator) getPredsForAmbigAlts(ambigAlts *BitSet, configs ATNConfigSet, nalts int) []SemanticContext {
 
 	altToPred := make([]SemanticContext, nalts+1)
 	for _, c := range configs.GetItems() {
-		if ambigAlts.contains(c.GetAlt()) {
+		if ambigAlts.Contains(c.GetAlt()) {
 			altToPred[c.GetAlt()] = SemanticContextOr(altToPred[c.GetAlt()], c.GetSemanticContext())
 		}
 	}
@@ -805,13 +805,13 @@ func (p *ParserATNSimulator) getPredsForAmbigAlts(ambigAlts *bitSet, configs ATN
 	return altToPred
 }
 
-func (p *ParserATNSimulator) getPredicatePredictions(ambigAlts *bitSet, altToPred []SemanticContext) []*PredPrediction {
+func (p *ParserATNSimulator) getPredicatePredictions(ambigAlts *BitSet, altToPred []SemanticContext) []*PredPrediction {
 	pairs := make([]*PredPrediction, 0)
 	containsPredicate := false
 	for i := 1; i < len(altToPred); i++ {
 		pred := altToPred[i]
 		// unpredicated is indicated by SemanticContextNONE
-		if ambigAlts != nil && ambigAlts.contains(i) {
+		if ambigAlts != nil && ambigAlts.Contains(i) {
 			pairs = append(pairs, NewPredPrediction(pred, i))
 		}
 		if pred != SemanticContextNone {
@@ -943,7 +943,7 @@ func (p *ParserATNSimulator) splitAccordingToSemanticValidity(configs ATNConfigS
 //  then we stop at the first predicate that evaluates to true. This
 //  includes pairs with nil predicates.
 //
-func (p *ParserATNSimulator) evalSemanticContext(predPredictions []*PredPrediction, outerContext ParserRuleContext, complete bool) *bitSet {
+func (p *ParserATNSimulator) evalSemanticContext(predPredictions []*PredPrediction, outerContext ParserRuleContext, complete bool) *BitSet {
 	predictions := newBitSet()
 	for i := 0; i < len(predPredictions); i++ {
 		pair := predPredictions[i]
@@ -1231,7 +1231,7 @@ func (p *ParserATNSimulator) ruleTransition(config ATNConfig, t *RuleTransition)
 	return NewBaseATNConfig1(config, t.getTarget(), newContext)
 }
 
-func (p *ParserATNSimulator) getConflictingAlts(configs ATNConfigSet) *bitSet {
+func (p *ParserATNSimulator) getConflictingAlts(configs ATNConfigSet) *BitSet {
 	altsets := PredictionModegetConflictingAltSubsets(configs)
 	return PredictionModeGetAlts(altsets)
 }
@@ -1272,8 +1272,8 @@ func (p *ParserATNSimulator) getConflictingAlts(configs ATNConfigSet) *bitSet {
 // that we still need to pursue.
 //
 
-func (p *ParserATNSimulator) getConflictingAltsOrUniqueAlt(configs ATNConfigSet) *bitSet {
-	var conflictingAlts *bitSet
+func (p *ParserATNSimulator) getConflictingAltsOrUniqueAlt(configs ATNConfigSet) *BitSet {
+	var conflictingAlts *BitSet
 	if configs.GetUniqueAlt() != ATNInvalidAltNumber {
 		conflictingAlts = newBitSet()
 		conflictingAlts.add(configs.GetUniqueAlt())
@@ -1437,7 +1437,7 @@ func (p *ParserATNSimulator) addDFAState(dfa *DFA, D *DFAState) *DFAState {
 	return D
 }
 
-func (p *ParserATNSimulator) ReportAttemptingFullContext(dfa *DFA, conflictingAlts *bitSet, configs ATNConfigSet, startIndex, stopIndex int) {
+func (p *ParserATNSimulator) ReportAttemptingFullContext(dfa *DFA, conflictingAlts *BitSet, configs ATNConfigSet, startIndex, stopIndex int) {
 	if ParserATNSimulatorDebug || ParserATNSimulatorRetryDebug {
 		interval := NewInterval(startIndex, stopIndex+1)
 		fmt.Println("ReportAttemptingFullContext decision=" + strconv.Itoa(dfa.decision) + ":" + configs.String() +
@@ -1461,7 +1461,7 @@ func (p *ParserATNSimulator) ReportContextSensitivity(dfa *DFA, prediction int, 
 
 // If context sensitive parsing, we know it's ambiguity not conflict//
 func (p *ParserATNSimulator) ReportAmbiguity(dfa *DFA, D *DFAState, startIndex, stopIndex int,
-	exact bool, ambigAlts *bitSet, configs ATNConfigSet) {
+	exact bool, ambigAlts *BitSet, configs ATNConfigSet) {
 	if ParserATNSimulatorDebug || ParserATNSimulatorRetryDebug {
 		interval := NewInterval(startIndex, stopIndex+1)
 		fmt.Println("ReportAmbiguity " + ambigAlts.String() + ":" + configs.String() +

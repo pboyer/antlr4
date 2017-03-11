@@ -167,39 +167,39 @@ func (s *set) String() string {
 	return r
 }
 
-type bitSet struct {
+type BitSet struct {
 	data map[int]bool
 }
 
-func newBitSet() *bitSet {
-	b := new(bitSet)
+func newBitSet() *BitSet {
+	b := new(BitSet)
 	b.data = make(map[int]bool)
 	return b
 }
 
-func (b *bitSet) add(value int) {
+func (b *BitSet) add(value int) {
 	b.data[value] = true
 }
 
-func (b *bitSet) clear(index int) {
+func (b *BitSet) clear(index int) {
 	delete(b.data, index)
 }
 
-func (b *bitSet) or(set *bitSet) {
+func (b *BitSet) or(set *BitSet) {
 	for k := range set.data {
 		b.add(k)
 	}
 }
 
-func (b *bitSet) remove(value int) {
+func (b *BitSet) remove(value int) {
 	delete(b.data, value)
 }
 
-func (b *bitSet) contains(value int) bool {
+func (b *BitSet) Contains(value int) bool {
 	return b.data[value] == true
 }
 
-func (b *bitSet) values() []int {
+func (b *BitSet) Values() []int {
 	ks := make([]int, len(b.data))
 	i := 0
 	for k := range b.data {
@@ -210,7 +210,7 @@ func (b *bitSet) values() []int {
 	return ks
 }
 
-func (b *bitSet) minValue() int {
+func (b *BitSet) minValue() int {
 	min := 2147483647
 
 	for k := range b.data {
@@ -222,8 +222,8 @@ func (b *bitSet) minValue() int {
 	return min
 }
 
-func (b *bitSet) equals(other interface{}) bool {
-	otherBitSet, ok := other.(*bitSet)
+func (b *BitSet) equals(other interface{}) bool {
+	otherBitSet, ok := other.(*BitSet)
 	if !ok {
 		return false
 	}
@@ -241,12 +241,12 @@ func (b *bitSet) equals(other interface{}) bool {
 	return true
 }
 
-func (b *bitSet) length() int {
+func (b *BitSet) length() int {
 	return len(b.data)
 }
 
-func (b *bitSet) String() string {
-	vals := b.values()
+func (b *BitSet) String() string {
+	vals := b.Values()
 	valsS := make([]string, len(vals))
 
 	for i, val := range vals {

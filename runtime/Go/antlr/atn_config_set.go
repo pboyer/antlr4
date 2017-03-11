@@ -33,8 +33,8 @@ type ATNConfigSet interface {
 	ReadOnly() bool
 	SetReadOnly(bool)
 
-	GetConflictingAlts() *bitSet
-	SetConflictingAlts(*bitSet)
+	GetConflictingAlts() *BitSet
+	SetConflictingAlts(*BitSet)
 
 	FullContext() bool
 
@@ -64,7 +64,7 @@ type BaseATNConfigSet struct {
 	// TODO: These fields make me pretty uncomfortable, but it is nice to pack up
 	// info together because it saves recomputation. Can we track conflicts as they
 	// are added to save scanning configs later?
-	conflictingAlts *bitSet
+	conflictingAlts *BitSet
 
 	// dipsIntoOuterContext is used by parsers and lexers. In a lexer, it indicates
 	// we hit a pred while computing a closure operation. Do not make a DFA state
@@ -304,11 +304,11 @@ func (b *BaseATNConfigSet) SetUniqueAlt(v int) {
 	b.uniqueAlt = v
 }
 
-func (b *BaseATNConfigSet) GetConflictingAlts() *bitSet {
+func (b *BaseATNConfigSet) GetConflictingAlts() *BitSet {
 	return b.conflictingAlts
 }
 
-func (b *BaseATNConfigSet) SetConflictingAlts(v *bitSet) {
+func (b *BaseATNConfigSet) SetConflictingAlts(v *BitSet) {
 	b.conflictingAlts = v
 }
 

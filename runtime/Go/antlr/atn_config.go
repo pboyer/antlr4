@@ -178,9 +178,7 @@ func (b *BaseATNConfig) shortHash() int {
 
 func (b *BaseATNConfig) Hash() int {
 	var c int
-	if b.context == nil {
-		c = 0
-	} else {
+	if b.context != nil {
 		c = b.context.Hash()
 	}
 
@@ -259,8 +257,6 @@ func (l *LexerATNConfig) Hash() int {
 	var f int
 	if l.passedThroughNonGreedyDecision {
 		f = 1
-	} else {
-		f = 0
 	}
 
 	h := murmurInit(7)
@@ -301,6 +297,5 @@ func (l *LexerATNConfig) equals(other interface{}) bool {
 
 func checkNonGreedyDecision(source *LexerATNConfig, target ATNState) bool {
 	var ds, ok = target.(DecisionState)
-
 	return source.passedThroughNonGreedyDecision || (ok && ds.getNonGreedy())
 }
