@@ -113,10 +113,9 @@ func (s *Set) length() int {
 func (s *Set) add(value interface{}) interface{} {
 
 	key := s.hashFunction(value)
-	values := s.data[key]
+	values, ok := s.data[key]
 
-	if s.data[key] != nil {
-
+	if ok {
 		for i := 0; i < len(values); i++ {
 			if s.equalsFunction(value, values[i]) {
 				return values[i]
@@ -134,9 +133,9 @@ func (s *Set) add(value interface{}) interface{} {
 func (s *Set) contains(value interface{}) bool {
 	key := s.hashFunction(value)
 
-	values := s.data[key]
+	values, ok := s.data[key]
 
-	if s.data[key] != nil {
+	if ok {
 		for i := 0; i < len(values); i++ {
 			if s.equalsFunction(value, values[i]) {
 				return true
@@ -147,7 +146,7 @@ func (s *Set) contains(value interface{}) bool {
 }
 
 func (s *Set) values() []interface{} {
-	l := make([]interface{}, 10)
+	l := make([]interface{}, 0, 10)
 
 	for key := range s.data {
 		l = append(l, s.data[key]...)

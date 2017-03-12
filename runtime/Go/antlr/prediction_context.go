@@ -5,7 +5,6 @@
 package antlr
 
 import (
-	"fmt"
 	"strconv"
 )
 
@@ -346,20 +345,6 @@ func predictionContextFromRuleContext(a *ATN, outerContext RuleContext) Predicti
 	transition := state.GetTransitions()[0]
 
 	return SingletonBasePredictionContextCreate(parent, transition.(*RuleTransition).followState.GetStateNumber())
-}
-
-func calculateListsHash(parents []BasePredictionContext, returnStates []int) string {
-	s := ""
-
-	for _, p := range parents {
-		s += fmt.Sprint(p)
-	}
-
-	for _, r := range returnStates {
-		s += fmt.Sprint(r)
-	}
-
-	return s
 }
 
 func merge(a, b PredictionContext, rootIsWildcard bool, mergeCache *DoubleDict) PredictionContext {
