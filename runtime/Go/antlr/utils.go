@@ -148,8 +148,8 @@ func (s *Set) contains(value interface{}) bool {
 func (s *Set) values() []interface{} {
 	l := make([]interface{}, 0, 10)
 
-	for key := range s.data {
-		l = append(l, s.data[key]...)
+	for _, v := range s.data {
+		l = append(l, v...)
 	}
 	return l
 }
