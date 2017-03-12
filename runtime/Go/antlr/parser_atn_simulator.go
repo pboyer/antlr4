@@ -25,7 +25,7 @@ type ParserATNSimulator struct {
 	input          TokenStream
 	startIndex     int
 	dfa            *DFA
-	mergeCache     *doubleDict
+	mergeCache     *DoubleDict
 	outerContext   ParserRuleContext
 }
 
@@ -489,7 +489,7 @@ func (p *ParserATNSimulator) computeReachSet(closure ATNConfigSet, t int, fullCt
 		fmt.Println("in computeReachSet, starting closure: " + closure.String())
 	}
 	if p.mergeCache == nil {
-		p.mergeCache = newDoubleDict()
+		p.mergeCache = NewDoubleDict()
 	}
 	intermediate := NewBaseATNConfigSet(fullCtx)
 
@@ -944,7 +944,7 @@ func (p *ParserATNSimulator) splitAccordingToSemanticValidity(configs ATNConfigS
 //  includes pairs with nil predicates.
 //
 func (p *ParserATNSimulator) evalSemanticContext(predPredictions []*PredPrediction, outerContext ParserRuleContext, complete bool) *BitSet {
-	predictions := newBitSet()
+	predictions := NewBitSet()
 	for i := 0; i < len(predPredictions); i++ {
 		pair := predPredictions[i]
 		if pair.pred == SemanticContextNone {
@@ -972,13 +972,13 @@ func (p *ParserATNSimulator) evalSemanticContext(predPredictions []*PredPredicti
 	return predictions
 }
 
-func (p *ParserATNSimulator) closure(config ATNConfig, configs ATNConfigSet, closureBusy *set, collectPredicates, fullCtx, treatEOFAsEpsilon bool) {
+func (p *ParserATNSimulator) closure(config ATNConfig, configs ATNConfigSet, closureBusy *Set, collectPredicates, fullCtx, treatEOFAsEpsilon bool) {
 	initialDepth := 0
 	p.closureCheckingStopState(config, configs, closureBusy, collectPredicates,
 		fullCtx, initialDepth, treatEOFAsEpsilon)
 }
 
-func (p *ParserATNSimulator) closureCheckingStopState(config ATNConfig, configs ATNConfigSet, closureBusy *set, collectPredicates, fullCtx bool, depth int, treatEOFAsEpsilon bool) {
+func (p *ParserATNSimulator) closureCheckingStopState(config ATNConfig, configs ATNConfigSet, closureBusy *Set, collectPredicates, fullCtx bool, depth int, treatEOFAsEpsilon bool) {
 
 	if ParserATNSimulatorDebug {
 		fmt.Println("closure(" + config.String() + ")")
@@ -1033,7 +1033,7 @@ func (p *ParserATNSimulator) closureCheckingStopState(config ATNConfig, configs 
 }
 
 // Do the actual work of walking epsilon edges//
-func (p *ParserATNSimulator) closureWork(config ATNConfig, configs ATNConfigSet, closureBusy *set, collectPredicates, fullCtx bool, depth int, treatEOFAsEpsilon bool) {
+func (p *ParserATNSimulator) closureWork(config ATNConfig, configs ATNConfigSet, closureBusy *Set, collectPredicates, fullCtx bool, depth int, treatEOFAsEpsilon bool) {
 	state := config.GetState()
 	// optimization
 	if !state.GetEpsilonOnlyTransitions() {
@@ -1275,7 +1275,7 @@ func (p *ParserATNSimulator) getConflictingAlts(configs ATNConfigSet) *BitSet {
 func (p *ParserATNSimulator) getConflictingAltsOrUniqueAlt(configs ATNConfigSet) *BitSet {
 	var conflictingAlts *BitSet
 	if configs.GetUniqueAlt() != ATNInvalidAltNumber {
-		conflictingAlts = newBitSet()
+		conflictingAlts = NewBitSet()
 		conflictingAlts.add(configs.GetUniqueAlt())
 	} else {
 		conflictingAlts = configs.GetConflictingAlts()

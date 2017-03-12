@@ -9,10 +9,10 @@ import "fmt"
 type ATNConfigSet interface {
 	Hasher
 
-	Add(ATNConfig, *doubleDict) bool
+	Add(ATNConfig, *DoubleDict) bool
 	AddAll([]ATNConfig) bool
 
-	GetStates() *set
+	GetStates() *Set
 	GetPredicates() []SemanticContext
 	GetItems() []ATNConfig
 
@@ -56,7 +56,7 @@ type BaseATNConfigSet struct {
 	// effectively doubles the number of objects associated with ATNConfigs. All
 	// keys are hashed by (s, i, _, pi), not including the context. Wiped out when
 	// read-only because a set becomes a DFA state.
-	configLookup *set
+	configLookup *Set
 
 	// configs is the added elements.
 	configs []ATNConfig
@@ -104,7 +104,7 @@ func NewBaseATNConfigSet(fullCtx bool) *BaseATNConfigSet {
 // ATNConfig.state, i is the ATNConfig.alt, and pi is the
 // ATNConfig.semanticContext. We use (s,i,pi) as the key. Updates
 // dipsIntoOuterContext and hasSemanticContext when necessary.
-func (b *BaseATNConfigSet) Add(config ATNConfig, mergeCache *doubleDict) bool {
+func (b *BaseATNConfigSet) Add(config ATNConfig, mergeCache *DoubleDict) bool {
 	if b.readOnly {
 		panic("set is read-only")
 	}
@@ -146,7 +146,7 @@ func (b *BaseATNConfigSet) Add(config ATNConfig, mergeCache *doubleDict) bool {
 	return true
 }
 
-func (b *BaseATNConfigSet) GetStates() *set {
+func (b *BaseATNConfigSet) GetStates() *Set {
 	states := newSet(nil, nil)
 
 	for i := 0; i < len(b.configs); i++ {

@@ -35,7 +35,7 @@ type LexerATNSimulator struct {
 
 	recog              Lexer
 	predictionMode     int
-	mergeCache         doubleDict
+	mergeCache         DoubleDict
 	startIndex         int
 	Line               int
 	CharPositionInLine int

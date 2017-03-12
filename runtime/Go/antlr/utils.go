@@ -48,14 +48,14 @@ func (s *intStack) push(e int) {
 	*s = append(*s, e)
 }
 
-type set struct {
+type Set struct {
 	data           map[int][]interface{}
 	hashFunction   func(interface{}) int
 	equalsFunction func(interface{}, interface{}) bool
 }
 
-func newSet(hashFunction func(interface{}) int, equalsFunction func(interface{}, interface{}) bool) *set {
-	s := new(set)
+func newSet(hashFunction func(interface{}) int, equalsFunction func(interface{}, interface{}) bool) *Set {
+	s := new(Set)
 
 	s.data = make(map[int][]interface{})
 
@@ -106,11 +106,11 @@ func hashCode(s string) int {
 	return int(h.Sum32())
 }
 
-func (s *set) length() int {
+func (s *Set) length() int {
 	return len(s.data)
 }
 
-func (s *set) add(value interface{}) interface{} {
+func (s *Set) add(value interface{}) interface{} {
 
 	key := s.hashFunction(value)
 	values := s.data[key]
@@ -131,7 +131,7 @@ func (s *set) add(value interface{}) interface{} {
 	return value
 }
 
-func (s *set) contains(value interface{}) bool {
+func (s *Set) contains(value interface{}) bool {
 	key := s.hashFunction(value)
 
 	values := s.data[key]
@@ -146,7 +146,7 @@ func (s *set) contains(value interface{}) bool {
 	return false
 }
 
-func (s *set) values() []interface{} {
+func (s *Set) values() []interface{} {
 	l := make([]interface{}, 10)
 
 	for key := range s.data {
@@ -155,7 +155,7 @@ func (s *set) values() []interface{} {
 	return l
 }
 
-func (s *set) String() string {
+func (s *Set) String() string {
 	r := ""
 
 	for _, av := range s.data {
@@ -171,7 +171,7 @@ type BitSet struct {
 	data map[int]bool
 }
 
-func newBitSet() *BitSet {
+func NewBitSet() *BitSet {
 	b := new(BitSet)
 	b.data = make(map[int]bool)
 	return b
@@ -255,27 +255,27 @@ func (b *BitSet) String() string {
 	return "{" + strings.Join(valsS, ", ") + "}"
 }
 
-type altDict struct {
+type AltDict struct {
 	data map[string]interface{}
 }
 
-func newAltDict() *altDict {
-	d := new(altDict)
+func NewAltDict() *AltDict {
+	d := new(AltDict)
 	d.data = make(map[string]interface{})
 	return d
 }
 
-func (a *altDict) Get(key string) interface{} {
+func (a *AltDict) Get(key string) interface{} {
 	key = "k-" + key
 	return a.data[key]
 }
 
-func (a *altDict) put(key string, value interface{}) {
+func (a *AltDict) put(key string, value interface{}) {
 	key = "k-" + key
 	a.data[key] = value
 }
 
-func (a *altDict) values() []interface{} {
+func (a *AltDict) values() []interface{} {
 	vs := make([]interface{}, len(a.data))
 	i := 0
 	for _, v := range a.data {
@@ -285,17 +285,17 @@ func (a *altDict) values() []interface{} {
 	return vs
 }
 
-type doubleDict struct {
+type DoubleDict struct {
 	data map[int]map[int]interface{}
 }
 
-func newDoubleDict() *doubleDict {
-	dd := new(doubleDict)
+func NewDoubleDict() *DoubleDict {
+	dd := new(DoubleDict)
 	dd.data = make(map[int]map[int]interface{})
 	return dd
 }
 
-func (d *doubleDict) get(a, b int) interface{} {
+func (d *DoubleDict) get(a, b int) interface{} {
 	data := d.data[a]
 
 	if data == nil {
@@ -305,7 +305,7 @@ func (d *doubleDict) get(a, b int) interface{} {
 	return data[b]
 }
 
-func (d *doubleDict) set(a, b int, o interface{}) {
+func (d *DoubleDict) set(a, b int, o interface{}) {
 	data := d.data[a]
 
 	if data == nil {

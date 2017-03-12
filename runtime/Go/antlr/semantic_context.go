@@ -153,7 +153,7 @@ func (p *PrecedencePredicate) compareTo(other *PrecedencePredicate) int {
 }
 
 func (p *PrecedencePredicate) Hash() int {
-	return 31 + p.precedence
+	return p.precedence
 }
 
 func (p *PrecedencePredicate) equals(other interface{}) bool {
@@ -170,7 +170,7 @@ func (p *PrecedencePredicate) String() string {
 	return "{" + strconv.Itoa(p.precedence) + ">=prec}?"
 }
 
-func PrecedencePredicatefilterPrecedencePredicates(set *set) []*PrecedencePredicate {
+func PrecedencePredicatefilterPrecedencePredicates(set *Set) []*PrecedencePredicate {
 	result := make([]*PrecedencePredicate, 0)
 
 	for _, v := range set.values() {

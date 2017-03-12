@@ -90,7 +90,7 @@ func NewDFAState(stateNumber int, configs ATNConfigSet) *DFAState {
 }
 
 // GetAltSet gets the set of all alts mentioned by all ATN configurations in d.
-func (d *DFAState) GetAltSet() *set {
+func (d *DFAState) GetAltSet() *Set {
 	alts := newSet(nil, nil)
 
 	if d.configs != nil {
