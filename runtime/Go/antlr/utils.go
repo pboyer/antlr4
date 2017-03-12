@@ -30,11 +30,11 @@ func intMax(a, b int) int {
 
 // A simple integer stack
 
-type intStack []int
+type IntStack []int
 
 var errEmptyStack = errors.New("Stack is empty")
 
-func (s *intStack) pop() (int, error) {
+func (s *IntStack) Pop() (int, error) {
 	l := len(*s) - 1
 	if l < 0 {
 		return 0, errEmptyStack
@@ -44,7 +44,7 @@ func (s *intStack) pop() (int, error) {
 	return v, nil
 }
 
-func (s *intStack) push(e int) {
+func (s *IntStack) Push(e int) {
 	*s = append(*s, e)
 }
 

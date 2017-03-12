@@ -40,7 +40,7 @@ type BaseParser struct {
 
 	input           TokenStream
 	errHandler      ErrorStrategy
-	precedenceStack intStack
+	precedenceStack IntStack
 	ctx             ParserRuleContext
 
 	tracer          *TraceListener
@@ -62,7 +62,7 @@ func NewBaseParser(input TokenStream) *BaseParser {
 	// instance of {@link DefaultErrorStrategy}.
 	p.errHandler = NewDefaultErrorStrategy()
 	p.precedenceStack = make([]int, 0)
-	p.precedenceStack.push(0)
+	p.precedenceStack.Push(0)
 	// The {@link ParserRuleContext} object for the currently executing rule.
 	// p.is always non-nil during the parsing process.
 	p.ctx = nil
@@ -104,7 +104,7 @@ func (p *BaseParser) reset() {
 	p._SyntaxErrors = 0
 	p.SetTrace(nil)
 	p.precedenceStack = make([]int, 0)
-	p.precedenceStack.push(0)
+	p.precedenceStack.Push(0)
 	if p.Interpreter != nil {
 		p.Interpreter.reset()
 	}
@@ -508,7 +508,7 @@ func (p *BaseParser) GetPrecedence() int {
 
 func (p *BaseParser) EnterRecursionRule(localctx ParserRuleContext, state, ruleIndex, precedence int) {
 	p.SetState(state)
-	p.precedenceStack.push(precedence)
+	p.precedenceStack.Push(precedence)
 	p.ctx = localctx
 	p.ctx.SetStart(p.input.LT(1))
 	if p.parseListeners != nil {
@@ -538,7 +538,7 @@ func (p *BaseParser) PushNewRecursionContext(localctx ParserRuleContext, state, 
 }
 
 func (p *BaseParser) UnrollRecursionContexts(parentCtx ParserRuleContext) {
-	p.precedenceStack.pop()
+	p.precedenceStack.Pop()
 	p.ctx.SetStop(p.input.LT(-1))
 	retCtx := p.ctx // save current ctx (return value)
 	// unroll so ctx is as it was before call to recursive method

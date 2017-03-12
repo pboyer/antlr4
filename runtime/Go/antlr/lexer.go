@@ -45,7 +45,7 @@ type BaseLexer struct {
 	hitEOF                 bool
 	channel                int
 	thetype                int
-	modeStack              intStack
+	modeStack              IntStack
 	mode                   int
 	text                   string
 }
@@ -258,7 +258,7 @@ func (b *BaseLexer) pushMode(m int) {
 	if LexerATNSimulatorDebug {
 		fmt.Println("pushMode " + strconv.Itoa(m))
 	}
-	b.modeStack.push(b.mode)
+	b.modeStack.Push(b.mode)
 	b.mode = m
 }
 
@@ -269,7 +269,7 @@ func (b *BaseLexer) popMode() int {
 	if LexerATNSimulatorDebug {
 		fmt.Println("popMode back to " + fmt.Sprint(b.modeStack[0:len(b.modeStack)-1]))
 	}
-	i, _ := b.modeStack.pop()
+	i, _ := b.modeStack.Pop()
 	b.mode = i
 	return b.mode
 }
