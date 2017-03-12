@@ -5,7 +5,6 @@
 package antlr
 
 import (
-	"fmt"
 	"strconv"
 )
 
@@ -27,66 +26,47 @@ var (
 )
 
 type PredictionContext interface {
-	Hash() string
+	Hasher
+
+	String() string
 	GetParent(int) PredictionContext
+
 	getReturnState(int) int
 	equals(PredictionContext) bool
 	length() int
 	isEmpty() bool
 	hasEmptyPath() bool
-	String() string
 }
 
 type BasePredictionContext struct {
-	cachedHashString string
+	cachedHash int
 }
 
-func NewBasePredictionContext(cachedHashString string) *BasePredictionContext {
+func NewBasePredictionContext(cachedHash int) *BasePredictionContext {
 	pc := new(BasePredictionContext)
-	pc.cachedHashString = cachedHashString
+	pc.cachedHash = cachedHash
 
 	return pc
 }
-
-// Stores the computed hash code of this {@link BasePredictionContext}. The hash
-// code is computed in parts to Match the following reference algorithm.
-//
-// <pre>
-// private int referenceHashCode() {
-// int hash = {@link MurmurHash//initialize MurmurHash.initialize}({@link
-// //INITIAL_HASH})
-//
-// for (int i = 0 i &lt {@link //Size()} i++) {
-// hash = {@link MurmurHash//update MurmurHash.update}(hash, {@link //GetParent
-// GetParent}(i))
-// }
-//
-// for (int i = 0 i &lt {@link //Size()} i++) {
-// hash = {@link MurmurHash//update MurmurHash.update}(hash, {@link
-// //getReturnState getReturnState}(i))
-// }
-//
-// hash = {@link MurmurHash//finish MurmurHash.finish}(hash, 2// {@link
-// //Size()})
-// return hash
-// }
-// </pre>
-//
 
 func (b *BasePredictionContext) isEmpty() bool {
 	return false
 }
 
-func (b *BasePredictionContext) Hash() string {
-	return b.cachedHashString
+func (b *BasePredictionContext) Hash() int {
+	return b.cachedHash
 }
 
-func calculateHashString(parent PredictionContext, returnState int) string {
-	return parent.String() + strconv.Itoa(returnState)
+func calculateHash(parent PredictionContext, returnState int) int {
+	h := murmurInit(1)
+	h = murmurUpdate(h, parent.Hash())
+	h = murmurUpdate(h, returnState)
+	return murmurFinish(h, 2)
 }
 
-func calculateEmptyHashString() string {
-	return ""
+func calculateEmptyHash() int {
+	h := murmurInit(1)
+	return murmurFinish(h, 0)
 }
 
 // Used to cache {@link BasePredictionContext} objects. Its used for the shared
@@ -141,12 +121,12 @@ type BaseSingletonPredictionContext struct {
 func NewBaseSingletonPredictionContext(parent PredictionContext, returnState int) *BaseSingletonPredictionContext {
 
 	s := new(BaseSingletonPredictionContext)
-	s.BasePredictionContext = NewBasePredictionContext("")
+	s.BasePredictionContext = NewBasePredictionContext(0)
 
 	if parent != nil {
-		s.cachedHashString = calculateHashString(parent, returnState)
+		s.cachedHash = calculateHash(parent, returnState)
 	} else {
-		s.cachedHashString = calculateEmptyHashString()
+		s.cachedHash = calculateEmptyHash()
 	}
 
 	s.parentCtx = parent
@@ -200,8 +180,8 @@ func (b *BaseSingletonPredictionContext) equals(other PredictionContext) bool {
 	return b.parentCtx.equals(otherP.parentCtx)
 }
 
-func (b *BaseSingletonPredictionContext) Hash() string {
-	return b.cachedHashString
+func (b *BaseSingletonPredictionContext) Hash() int {
+	return b.cachedHash
 }
 
 func (b *BaseSingletonPredictionContext) String() string {
@@ -273,10 +253,10 @@ func NewArrayPredictionContext(parents []PredictionContext, returnStates []int) 
 	// returnState == {@link //EmptyReturnState}.
 
 	c := new(ArrayPredictionContext)
-	c.BasePredictionContext = NewBasePredictionContext("")
+	c.BasePredictionContext = NewBasePredictionContext(0)
 
 	for i := range parents {
-		c.cachedHashString += calculateHashString(parents[i], returnStates[i])
+		c.cachedHash += calculateHash(parents[i], returnStates[i])
 	}
 
 	c.parents = parents
@@ -314,7 +294,7 @@ func (a *ArrayPredictionContext) getReturnState(index int) int {
 func (a *ArrayPredictionContext) equals(other PredictionContext) bool {
 	if _, ok := other.(*ArrayPredictionContext); !ok {
 		return false
-	} else if a.cachedHashString != other.Hash() {
+	} else if a.cachedHash != other.Hash() {
 		return false // can't be same if hash is different
 	} else {
 		otherP := other.(*ArrayPredictionContext)
@@ -365,20 +345,6 @@ func predictionContextFromRuleContext(a *ATN, outerContext RuleContext) Predicti
 	transition := state.GetTransitions()[0]
 
 	return SingletonBasePredictionContextCreate(parent, transition.(*RuleTransition).followState.GetStateNumber())
-}
-
-func calculateListsHashString(parents []BasePredictionContext, returnStates []int) string {
-	s := ""
-
-	for _, p := range parents {
-		s += fmt.Sprint(p)
-	}
-
-	for _, r := range returnStates {
-		s += fmt.Sprint(r)
-	}
-
-	return s
 }
 
 func merge(a, b PredictionContext, rootIsWildcard bool, mergeCache *DoubleDict) PredictionContext {

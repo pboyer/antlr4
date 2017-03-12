@@ -43,9 +43,9 @@ type BaseParser struct {
 	precedenceStack IntStack
 	ctx             ParserRuleContext
 
-	tracer         *TraceListener
-	parseListeners []ParseTreeListener
-	_SyntaxErrors  int
+	tracer          *TraceListener
+	parseListeners  []ParseTreeListener
+	_SyntaxErrors   int
 }
 
 // p.is all the parsing support code essentially most of it is error

@@ -49,7 +49,7 @@ type ATNConfigSet interface {
 // about its elements and can combine similar configurations using a
 // graph-structured stack.
 type BaseATNConfigSet struct {
-	cachedHashString string
+	cachedHash int
 
 	// configLookup is used to determine whether two BaseATNConfigSets are equal. We
 	// need all configurations with the same (s, i, _, semctx) to be equal. A key
@@ -94,9 +94,9 @@ type BaseATNConfigSet struct {
 
 func NewBaseATNConfigSet(fullCtx bool) *BaseATNConfigSet {
 	return &BaseATNConfigSet{
-		cachedHashString: "-1",
-		configLookup:     NewSet(hashATNConfig, equalATNConfigs),
-		fullCtx:          fullCtx,
+		cachedHash:   -1,
+		configLookup: NewSet(hashATNConfig, equalATNConfigs),
+		fullCtx:      fullCtx,
 	}
 }
 
@@ -120,7 +120,7 @@ func (b *BaseATNConfigSet) Add(config ATNConfig, mergeCache *DoubleDict) bool {
 	existing := b.configLookup.add(config).(ATNConfig)
 
 	if existing == config {
-		b.cachedHashString = "-1"
+		b.cachedHash = -1
 		b.configs = append(b.configs, config) // Track order here
 
 		return true
@@ -224,26 +224,30 @@ func (b *BaseATNConfigSet) Equals(other interface{}) bool {
 		b.dipsIntoOuterContext == other2.dipsIntoOuterContext
 }
 
-func (b *BaseATNConfigSet) Hash() string {
+func (b *BaseATNConfigSet) Hash() int {
 	if b.readOnly {
-		if b.cachedHashString == "-1" {
-			b.cachedHashString = b.hashConfigs()
+		if b.cachedHash == -1 {
+			b.cachedHash = b.hashConfigs()
 		}
 
-		return b.cachedHashString
+		return b.cachedHash
 	}
 
 	return b.hashConfigs()
 }
 
-func (b *BaseATNConfigSet) hashConfigs() string {
-	s := ""
+func (b *BaseATNConfigSet) hashConfigs() int {
+	h := 1
 
 	for _, c := range b.configs {
-		s += fmt.Sprint(c)
+		h += 31 * h
+
+		if c != nil {
+			h += c.Hash()
+		}
 	}
 
-	return s
+	return h
 }
 
 func (b *BaseATNConfigSet) Length() int {
@@ -276,7 +280,7 @@ func (b *BaseATNConfigSet) Clear() {
 	}
 
 	b.configs = make([]ATNConfig, 0)
-	b.cachedHashString = "-1"
+	b.cachedHash = -1
 	b.configLookup = NewSet(hashATNConfig, equalATNConfigs)
 }
 
@@ -364,7 +368,7 @@ func NewOrderedATNConfigSet() *OrderedATNConfigSet {
 	return &OrderedATNConfigSet{BaseATNConfigSet: b}
 }
 
-func hashATNConfig(c interface{}) string {
+func hashATNConfig(c interface{}) int {
 	return c.(ATNConfig).shortHash()
 }
 

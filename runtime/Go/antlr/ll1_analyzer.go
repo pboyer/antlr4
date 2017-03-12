@@ -113,7 +113,7 @@ func (la *LL1Analyzer) look2(s, stopState ATNState, ctx PredictionContext, look 
 
 	returnState := la.atn.states[ctx.getReturnState(i)]
 
-	removed := calledRuleStack.contains(returnState.GetRuleIndex())
+	removed := calledRuleStack.Contains(returnState.GetRuleIndex())
 
 	defer func() {
 		if removed {
@@ -173,7 +173,7 @@ func (la *LL1Analyzer) look1(s, stopState ATNState, ctx PredictionContext, look 
 		t := s.GetTransitions()[i]
 
 		if t1, ok := t.(*RuleTransition); ok {
-			if calledRuleStack.contains(t1.getTarget().GetRuleIndex()) {
+			if calledRuleStack.Contains(t1.getTarget().GetRuleIndex()) {
 				continue
 			}
 

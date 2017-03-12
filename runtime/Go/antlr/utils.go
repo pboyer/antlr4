@@ -32,12 +32,12 @@ func intMax(a, b int) int {
 
 type IntStack []int
 
-var ErrEmptyStack = errors.New("Stack is empty")
+var errEmptyStack = errors.New("Stack is empty")
 
 func (s *IntStack) Pop() (int, error) {
 	l := len(*s) - 1
 	if l < 0 {
-		return 0, ErrEmptyStack
+		return 0, errEmptyStack
 	}
 	v := (*s)[l]
 	*s = (*s)[0:l]
@@ -49,25 +49,24 @@ func (s *IntStack) Push(e int) {
 }
 
 type Set struct {
-	data           map[string][]interface{}
-	hashFunction   func(interface{}) string
+	data           map[int][]interface{}
+	hashFunction   func(interface{}) int
 	equalsFunction func(interface{}, interface{}) bool
 }
 
-func NewSet(hashFunction func(interface{}) string, equalsFunction func(interface{}, interface{}) bool) *Set {
-
+func NewSet(hashFunction func(interface{}) int, equalsFunction func(interface{}, interface{}) bool) *Set {
 	s := new(Set)
 
-	s.data = make(map[string][]interface{})
+	s.data = make(map[int][]interface{})
 
 	if hashFunction == nil {
-		s.hashFunction = standardHashFunction
+		s.hashFunction = hasherHash
 	} else {
 		s.hashFunction = hashFunction
 	}
 
 	if equalsFunction == nil {
-		s.equalsFunction = standardEqualsFunction
+		s.equalsFunction = comparableHash
 	} else {
 		s.equalsFunction = equalsFunction
 	}
@@ -75,7 +74,7 @@ func NewSet(hashFunction func(interface{}) string, equalsFunction func(interface
 	return s
 }
 
-func standardEqualsFunction(a interface{}, b interface{}) bool {
+func comparableHash(a interface{}, b interface{}) bool {
 
 	ac, oka := a.(Comparable)
 	bc, okb := b.(Comparable)
@@ -87,7 +86,7 @@ func standardEqualsFunction(a interface{}, b interface{}) bool {
 	return ac.equals(bc)
 }
 
-func standardHashFunction(a interface{}) string {
+func hasherHash(a interface{}) int {
 	h, ok := a.(Hasher)
 
 	if ok {
@@ -97,24 +96,14 @@ func standardHashFunction(a interface{}) string {
 	panic("Not Hasher")
 }
 
-//func getBytes(key interface{}) ([]byte, error) {
-//	var buf bytes.Buffer
-//	enc := gob.NewEncoder(&buf)
-//	err := enc.Encode(key)
-//	if err != nil {
-//		return nil, err
-//	}
-//	return buf.Bytes(), nil
-//}
-
 type Hasher interface {
-	Hash() string
+	Hash() int
 }
 
-func hashCode(s string) string {
+func hashCode(s string) int {
 	h := fnv.New32a()
 	h.Write([]byte((s)))
-	return fmt.Sprint(h.Sum32())
+	return int(h.Sum32())
 }
 
 func (s *Set) length() int {
@@ -123,13 +112,10 @@ func (s *Set) length() int {
 
 func (s *Set) add(value interface{}) interface{} {
 
-	hash := s.hashFunction(value)
-	key := "hash_" + hashCode(hash)
+	key := s.hashFunction(value)
+	values, ok := s.data[key]
 
-	values := s.data[key]
-
-	if s.data[key] != nil {
-
+	if ok {
 		for i := 0; i < len(values); i++ {
 			if s.equalsFunction(value, values[i]) {
 				return values[i]
@@ -145,13 +131,11 @@ func (s *Set) add(value interface{}) interface{} {
 }
 
 func (s *Set) contains(value interface{}) bool {
+	key := s.hashFunction(value)
 
-	hash := s.hashFunction(value)
-	key := "hash_" + hashCode(hash)
+	values, ok := s.data[key]
 
-	values := s.data[key]
-
-	if s.data[key] != nil {
+	if ok {
 		for i := 0; i < len(values); i++ {
 			if s.equalsFunction(value, values[i]) {
 				return true
@@ -162,18 +146,15 @@ func (s *Set) contains(value interface{}) bool {
 }
 
 func (s *Set) values() []interface{} {
-	l := make([]interface{}, 0)
+	l := make([]interface{}, 0, 10)
 
-	for key := range s.data {
-		if strings.Index(key, "hash_") == 0 {
-			l = append(l, s.data[key]...)
-		}
+	for _, v := range s.data {
+		l = append(l, v...)
 	}
 	return l
 }
 
 func (s *Set) String() string {
-
 	r := ""
 
 	for _, av := range s.data {
@@ -213,11 +194,11 @@ func (b *BitSet) remove(value int) {
 	delete(b.data, value)
 }
 
-func (b *BitSet) contains(value int) bool {
+func (b *BitSet) Contains(value int) bool {
 	return b.data[value] == true
 }
 
-func (b *BitSet) values() []int {
+func (b *BitSet) Values() []int {
 	ks := make([]int, len(b.data))
 	i := 0
 	for k := range b.data {
@@ -264,7 +245,7 @@ func (b *BitSet) length() int {
 }
 
 func (b *BitSet) String() string {
-	vals := b.values()
+	vals := b.Values()
 	valsS := make([]string, len(vals))
 
 	for i, val := range vals {
@@ -304,16 +285,16 @@ func (a *AltDict) values() []interface{} {
 }
 
 type DoubleDict struct {
-	data map[string]map[string]interface{}
+	data map[int]map[int]interface{}
 }
 
 func NewDoubleDict() *DoubleDict {
 	dd := new(DoubleDict)
-	dd.data = make(map[string]map[string]interface{})
+	dd.data = make(map[int]map[int]interface{})
 	return dd
 }
 
-func (d *DoubleDict) Get(a string, b string) interface{} {
+func (d *DoubleDict) Get(a, b int) interface{} {
 	data := d.data[a]
 
 	if data == nil {
@@ -323,11 +304,11 @@ func (d *DoubleDict) Get(a string, b string) interface{} {
 	return data[b]
 }
 
-func (d *DoubleDict) set(a, b string, o interface{}) {
+func (d *DoubleDict) set(a, b int, o interface{}) {
 	data := d.data[a]
 
 	if data == nil {
-		data = make(map[string]interface{})
+		data = make(map[int]interface{})
 		d.data[a] = data
 	}
 
@@ -372,16 +353,35 @@ func PrintArrayJavaStyle(sa []string) string {
 	return buffer.String()
 }
 
-func TitleCase(str string) string {
+// murmur hash
+const (
+	c1_32 = 0xCC9E2D51
+	c2_32 = 0x1B873593
+	n1_32 = 0xE6546B64
+)
 
-	//	func (re *Regexp) ReplaceAllStringFunc(src string, repl func(string) string) string
-	//	return str.replace(//g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1)})
+func murmurInit(seed int) int {
+	return seed
+}
 
-	panic("Not implemented")
+func murmurUpdate(h1 int, k1 int) int {
+	k1 *= c1_32
+	k1 = (k1 << 15) | (k1 >> 17) // rotl32(k1, 15)
+	k1 *= c2_32
 
-	//	re := regexp.MustCompile("\w\S*")
-	//	return re.ReplaceAllStringFunc(str, func(s string) {
-	//		return strings.ToUpper(s[0:1]) + s[1:2]
-	//	})
+	h1 ^= k1
+	h1 = (h1 << 13) | (h1 >> 19) // rotl32(h1, 13)
+	h1 = h1*5 + 0xe6546b64
+	return h1
+}
 
+func murmurFinish(h1 int, numberOfWords int) int {
+	h1 ^= (numberOfWords * 4)
+	h1 ^= h1 >> 16
+	h1 *= 0x85ebca6b
+	h1 ^= h1 >> 13
+	h1 *= 0xc2b2ae35
+	h1 ^= h1 >> 16
+
+	return h1
 }

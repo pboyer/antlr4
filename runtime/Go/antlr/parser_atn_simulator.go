@@ -782,8 +782,8 @@ func (p *ParserATNSimulator) getPredsForAmbigAlts(ambigAlts *BitSet, configs ATN
 
 	altToPred := make([]SemanticContext, nalts+1)
 	for _, c := range configs.GetItems() {
-		if ambigAlts.contains(c.GetAlt()) {
-			altToPred[c.GetAlt()] = SemanticContextorContext(altToPred[c.GetAlt()], c.GetSemanticContext())
+		if ambigAlts.Contains(c.GetAlt()) {
+			altToPred[c.GetAlt()] = SemanticContextOr(altToPred[c.GetAlt()], c.GetSemanticContext())
 		}
 	}
 	nPredAlts := 0
@@ -811,7 +811,7 @@ func (p *ParserATNSimulator) getPredicatePredictions(ambigAlts *BitSet, altToPre
 	for i := 1; i < len(altToPred); i++ {
 		pred := altToPred[i]
 		// unpredicated is indicated by SemanticContextNONE
-		if ambigAlts != nil && ambigAlts.contains(i) {
+		if ambigAlts != nil && ambigAlts.Contains(i) {
 			pairs = append(pairs, NewPredPrediction(pred, i))
 		}
 		if pred != SemanticContextNone {
@@ -1174,7 +1174,7 @@ func (p *ParserATNSimulator) precedenceTransition(config ATNConfig,
 				c = NewBaseATNConfig4(config, pt.getTarget()) // no pred context
 			}
 		} else {
-			newSemCtx := SemanticContextandContext(config.GetSemanticContext(), pt.getPredicate())
+			newSemCtx := SemanticContextAnd(config.GetSemanticContext(), pt.getPredicate())
 			c = NewBaseATNConfig3(config, pt.getTarget(), newSemCtx)
 		}
 	} else {
@@ -1210,7 +1210,7 @@ func (p *ParserATNSimulator) predTransition(config ATNConfig, pt *PredicateTrans
 				c = NewBaseATNConfig4(config, pt.getTarget()) // no pred context
 			}
 		} else {
-			newSemCtx := SemanticContextandContext(config.GetSemanticContext(), pt.getPredicate())
+			newSemCtx := SemanticContextAnd(config.GetSemanticContext(), pt.getPredicate())
 			c = NewBaseATNConfig3(config, pt.getTarget(), newSemCtx)
 		}
 	} else {

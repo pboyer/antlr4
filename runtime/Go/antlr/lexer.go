@@ -31,12 +31,12 @@ type Lexer interface {
 type BaseLexer struct {
 	*BaseRecognizer
 
-	Interpreter         ILexerATNSimulator
-	TokenStartCharIndex int
-	TokenStartLine      int
-	TokenStartColumn    int
-	ActionType          int
-	Virt                Lexer // The most derived lexer implementation. Allows virtual method calls.
+	Interpreter            ILexerATNSimulator
+	TokenStartCharIndex    int
+	TokenStartLine         int
+	TokenStartColumn       int
+	ActionType             int
+	Virt                   Lexer // The most derived lexer implementation. Allows virtual method calls.
 
 	input                  CharStream
 	factory                TokenFactory
