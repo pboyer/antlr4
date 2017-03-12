@@ -5,7 +5,6 @@
 package antlr
 
 import (
-	"fmt"
 	"strconv"
 )
 
@@ -28,6 +27,7 @@ var (
 
 type PredictionContext interface {
 	Hash() string
+	HashCode() int
 	GetParent(int) PredictionContext
 	getReturnState(int) int
 	equals(PredictionContext) bool
@@ -204,6 +204,18 @@ func (b *BaseSingletonPredictionContext) Hash() string {
 	return b.cachedHashString
 }
 
+func (b *BaseSingletonPredictionContext) HashCode() int {
+	h := initHash(1)
+
+	if b.parentCtx == nil {
+		return finish(h, 0)
+	}
+
+	h = update(h, b.parentCtx.HashCode())
+	h = update(h, b.returnState)
+	return finish(h, 2)
+}
+
 func (b *BaseSingletonPredictionContext) String() string {
 	var up string
 
@@ -322,6 +334,20 @@ func (a *ArrayPredictionContext) equals(other PredictionContext) bool {
 	}
 }
 
+func (a *ArrayPredictionContext) HashCode() int {
+	h := initHash(1)
+
+	for _, p := range a.parents {
+		h = update(h, p.HashCode())
+	}
+
+	for _, r := range a.returnStates {
+		h = update(h, r)
+	}
+
+	return finish(h, 2 * len(a.parents))
+}
+
 func (a *ArrayPredictionContext) String() string {
 	if a.isEmpty() {
 		return "[]"
@@ -365,20 +391,6 @@ func predictionContextFromRuleContext(a *ATN, outerContext RuleContext) Predicti
 	transition := state.GetTransitions()[0]
 
 	return SingletonBasePredictionContextCreate(parent, transition.(*RuleTransition).followState.GetStateNumber())
-}
-
-func calculateListsHashString(parents []BasePredictionContext, returnStates []int) string {
-	s := ""
-
-	for _, p := range parents {
-		s += fmt.Sprint(p)
-	}
-
-	for _, r := range returnStates {
-		s += fmt.Sprint(r)
-	}
-
-	return s
 }
 
 func merge(a, b PredictionContext, rootIsWildcard bool, mergeCache *DoubleDict) PredictionContext {

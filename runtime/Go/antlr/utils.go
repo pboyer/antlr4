@@ -49,21 +49,23 @@ func (s *IntStack) Push(e int) {
 }
 
 type Set struct {
-	data           map[string][]interface{}
-	hashFunction   func(interface{}) string
-	equalsFunction func(interface{}, interface{}) bool
+	data             map[int][]interface{}
+	hashcodeFunction func(interface{}) int
+	equalsFunction   func(interface{}, interface{}) bool
 }
 
-func NewSet(hashFunction func(interface{}) string, equalsFunction func(interface{}, interface{}) bool) *Set {
+func NewSet(
+	hashcodeFunction func(interface{}) int,
+	equalsFunction func(interface{}, interface{}) bool) *Set {
 
 	s := new(Set)
 
-	s.data = make(map[string][]interface{})
+	s.data = make(map[int][]interface{})
 
-	if hashFunction == nil {
-		s.hashFunction = standardHashFunction
+	if hashcodeFunction != nil {
+		s.hashcodeFunction = hashcodeFunction
 	} else {
-		s.hashFunction = hashFunction
+		s.hashcodeFunction = standardHashFunction
 	}
 
 	if equalsFunction == nil {
@@ -87,34 +89,27 @@ func standardEqualsFunction(a interface{}, b interface{}) bool {
 	return ac.equals(bc)
 }
 
-func standardHashFunction(a interface{}) string {
-	h, ok := a.(Hasher)
+func standardHashFunction(a interface{}) int {
+	if h, ok := a.(HashCoder); ok {
+		return h.HashCode()
+	}
 
-	if ok {
-		return h.Hash()
+	if h, ok := a.(Hasher); ok {
+		s := h.Hash()
+		ha := fnv.New32a()
+		ha.Write([]byte((s)))
+		return int(ha.Sum32())
 	}
 
 	panic("Not Hasher")
 }
 
-//func getBytes(key interface{}) ([]byte, error) {
-//	var buf bytes.Buffer
-//	enc := gob.NewEncoder(&buf)
-//	err := enc.Encode(key)
-//	if err != nil {
-//		return nil, err
-//	}
-//	return buf.Bytes(), nil
-//}
-
 type Hasher interface {
 	Hash() string
 }
 
-func hashCode(s string) string {
-	h := fnv.New32a()
-	h.Write([]byte((s)))
-	return fmt.Sprint(h.Sum32())
+type HashCoder interface {
+	HashCode() int
 }
 
 func (s *Set) length() int {
@@ -123,13 +118,11 @@ func (s *Set) length() int {
 
 func (s *Set) add(value interface{}) interface{} {
 
-	hash := s.hashFunction(value)
-	key := "hash_" + hashCode(hash)
+	key := s.hashcodeFunction(value)
 
 	values := s.data[key]
 
 	if s.data[key] != nil {
-
 		for i := 0; i < len(values); i++ {
 			if s.equalsFunction(value, values[i]) {
 				return values[i]
@@ -140,14 +133,16 @@ func (s *Set) add(value interface{}) interface{} {
 		return value
 	}
 
-	s.data[key] = []interface{}{value}
+	v := make([]interface{}, 1, 10)
+	v[0] = value
+	s.data[key] = v
+
 	return value
 }
 
 func (s *Set) contains(value interface{}) bool {
 
-	hash := s.hashFunction(value)
-	key := "hash_" + hashCode(hash)
+	key := s.hashcodeFunction(value)
 
 	values := s.data[key]
 
@@ -162,18 +157,16 @@ func (s *Set) contains(value interface{}) bool {
 }
 
 func (s *Set) values() []interface{} {
-	l := make([]interface{}, 0)
+	var l []interface{}
 
-	for key := range s.data {
-		if strings.Index(key, "hash_") == 0 {
-			l = append(l, s.data[key]...)
-		}
+	for _, v := range s.data {
+		l = append(l, v...)
 	}
+
 	return l
 }
 
 func (s *Set) String() string {
-
 	r := ""
 
 	for _, av := range s.data {
@@ -214,7 +207,7 @@ func (b *BitSet) remove(value int) {
 }
 
 func (b *BitSet) contains(value int) bool {
-	return b.data[value] == true
+	return b.data[value]
 }
 
 func (b *BitSet) values() []int {
@@ -372,16 +365,35 @@ func PrintArrayJavaStyle(sa []string) string {
 	return buffer.String()
 }
 
-func TitleCase(str string) string {
+// murmur hash
+const (
+	c1_32 = 0xCC9E2D51
+	c2_32 = 0x1B873593
+	n1_32 = 0xE6546B64
+)
 
-	//	func (re *Regexp) ReplaceAllStringFunc(src string, repl func(string) string) string
-	//	return str.replace(//g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1)})
+func initHash(seed int) int {
+	return seed
+}
 
-	panic("Not implemented")
+func update(h1 int, k1 int) int {
+	k1 *= c1_32
+	k1 = (k1 << 15) | (k1 >> 17) // rotl32(k1, 15)
+	k1 *= c2_32
 
-	//	re := regexp.MustCompile("\w\S*")
-	//	return re.ReplaceAllStringFunc(str, func(s string) {
-	//		return strings.ToUpper(s[0:1]) + s[1:2]
-	//	})
+	h1 ^= k1
+	h1 = (h1 << 13) | (h1 >> 19) // rotl32(h1, 13)
+	h1 = h1*5 + 0xe6546b64
+	return h1
+}
 
+func finish(h1 int, numberOfWords int) int {
+	h1 ^= (numberOfWords * 4)
+	h1 ^= h1 >> 16
+	h1 *= 0x85ebca6b
+	h1 ^= h1 >> 13
+	h1 *= 0xc2b2ae35
+	h1 ^= h1 >> 16
+
+	return h1
 }
