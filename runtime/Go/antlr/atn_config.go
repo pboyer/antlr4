@@ -8,7 +8,7 @@ import (
 	"fmt"
 )
 
-type Comparable interface {
+type comparable interface {
 	equals(other interface{}) bool
 }
 
@@ -18,9 +18,9 @@ type Comparable interface {
 // state. The semantic context is the tree of semantic predicates encountered
 // before reaching an ATN state.
 type ATNConfig interface {
-	Comparable
+	comparable
 
-	HashCode() int
+	hash() int
 
 	GetState() ATNState
 	GetAlt() int
@@ -166,18 +166,18 @@ func (b *BaseATNConfig) equals(o interface{}) bool {
 	return nums && alts && cons && sups && equal
 }
 
-func (b *BaseATNConfig) HashCode() int {
+func (b *BaseATNConfig) hash() int {
 	var c int
 	if b.context != nil {
-		c = b.context.HashCode()
+		c = b.context.hash()
 	}
 
-	h := initHash(7)
-	h = update(h, b.state.GetStateNumber())
-	h = update(h, b.alt)
-	h = update(h, c)
-	h = update(h, b.semanticContext.HashCode())
-	return finish(h, 4)
+	h := murmurInit(7)
+	h = murmurUpdate(h, b.state.GetStateNumber())
+	h = murmurUpdate(h, b.alt)
+	h = murmurUpdate(h, c)
+	h = murmurUpdate(h, b.semanticContext.hash())
+	return murmurFinish(h, 4)
 }
 
 func (b *BaseATNConfig) String() string {
@@ -243,21 +243,21 @@ func NewLexerATNConfig1(state ATNState, alt int, context PredictionContext) *Lex
 	return &LexerATNConfig{BaseATNConfig: NewBaseATNConfig5(state, alt, context, SemanticContextNone)}
 }
 
-func (l *LexerATNConfig) HashCode() int {
+func (l *LexerATNConfig) hash() int {
 	var f int
 	if l.passedThroughNonGreedyDecision {
 		f = 1
 	} else {
 		f = 0
 	}
-	h := initHash(7)
-	h = update(h, l.state.HashCode())
-	h = update(h, l.alt)
-	h = update(h, l.context.HashCode())
-	h = update(h, l.semanticContext.HashCode())
-	h = update(h, f)
-	h = update(h, l.lexerActionExecutor.HashCode())
-	h = finish(h, 6)
+	h := murmurInit(7)
+	h = murmurUpdate(h, l.state.hash())
+	h = murmurUpdate(h, l.alt)
+	h = murmurUpdate(h, l.context.hash())
+	h = murmurUpdate(h, l.semanticContext.hash())
+	h = murmurUpdate(h, f)
+	h = murmurUpdate(h, l.lexerActionExecutor.hash())
+	h = murmurFinish(h, 6)
 	return h
 }
 

@@ -26,7 +26,7 @@ var (
 )
 
 type PredictionContext interface {
-	HashCode() int
+	hash() int
 	GetParent(int) PredictionContext
 	getReturnState(int) int
 	equals(PredictionContext) bool
@@ -52,15 +52,15 @@ func (b *BasePredictionContext) isEmpty() bool {
 }
 
 func calculateHash(parent PredictionContext, returnState int) int {
-	h := initHash(1)
-	h = update(h, parent.HashCode())
-	h = update(h, returnState)
-	return finish(h, 2)
+	h := murmurInit(1)
+	h = murmurUpdate(h, parent.hash())
+	h = murmurUpdate(h, returnState)
+	return murmurFinish(h, 2)
 }
 
 func calculateEmptyHash() int {
-	h := initHash(1)
-	return finish(h, 0)
+	h := murmurInit(1)
+	return murmurFinish(h, 0)
 }
 
 // Used to cache {@link BasePredictionContext} objects. Its used for the shared
@@ -159,7 +159,7 @@ func (b *BaseSingletonPredictionContext) equals(other PredictionContext) bool {
 		return true
 	} else if _, ok := other.(*BaseSingletonPredictionContext); !ok {
 		return false
-	} else if b.HashCode() != other.HashCode() {
+	} else if b.hash() != other.hash() {
 		return false // can't be same if hash is different
 	}
 
@@ -174,16 +174,16 @@ func (b *BaseSingletonPredictionContext) equals(other PredictionContext) bool {
 	return b.parentCtx.equals(otherP.parentCtx)
 }
 
-func (b *BaseSingletonPredictionContext) HashCode() int {
-	h := initHash(1)
+func (b *BaseSingletonPredictionContext) hash() int {
+	h := murmurInit(1)
 
 	if b.parentCtx == nil {
-		return finish(h, 0)
+		return murmurFinish(h, 0)
 	}
 
-	h = update(h, b.parentCtx.HashCode())
-	h = update(h, b.returnState)
-	return finish(h, 2)
+	h = murmurUpdate(h, b.parentCtx.hash())
+	h = murmurUpdate(h, b.returnState)
+	return murmurFinish(h, 2)
 }
 
 func (b *BaseSingletonPredictionContext) String() string {
@@ -296,7 +296,7 @@ func (a *ArrayPredictionContext) getReturnState(index int) int {
 func (a *ArrayPredictionContext) equals(other PredictionContext) bool {
 	if _, ok := other.(*ArrayPredictionContext); !ok {
 		return false
-	} else if a.cachedHash != other.HashCode() {
+	} else if a.cachedHash != other.hash() {
 		return false // can't be same if hash is different
 	} else {
 		otherP := other.(*ArrayPredictionContext)
@@ -304,18 +304,18 @@ func (a *ArrayPredictionContext) equals(other PredictionContext) bool {
 	}
 }
 
-func (a *ArrayPredictionContext) HashCode() int {
-	h := initHash(1)
+func (a *ArrayPredictionContext) hash() int {
+	h := murmurInit(1)
 
 	for _, p := range a.parents {
-		h = update(h, p.HashCode())
+		h = murmurUpdate(h, p.hash())
 	}
 
 	for _, r := range a.returnStates {
-		h = update(h, r)
+		h = murmurUpdate(h, r)
 	}
 
-	return finish(h, 2 * len(a.parents))
+	return murmurFinish(h, 2 * len(a.parents))
 }
 
 func (a *ArrayPredictionContext) String() string {
@@ -428,11 +428,11 @@ func merge(a, b PredictionContext, rootIsWildcard bool, mergeCache *DoubleDict) 
 // /
 func mergeSingletons(a, b *BaseSingletonPredictionContext, rootIsWildcard bool, mergeCache *DoubleDict) PredictionContext {
 	if mergeCache != nil {
-		previous := mergeCache.Get(a.HashCode(), b.HashCode())
+		previous := mergeCache.Get(a.hash(), b.hash())
 		if previous != nil {
 			return previous.(PredictionContext)
 		}
-		previous = mergeCache.Get(b.HashCode(), a.HashCode())
+		previous = mergeCache.Get(b.hash(), a.hash())
 		if previous != nil {
 			return previous.(PredictionContext)
 		}
@@ -441,7 +441,7 @@ func mergeSingletons(a, b *BaseSingletonPredictionContext, rootIsWildcard bool, 
 	rootMerge := mergeRoot(a, b, rootIsWildcard)
 	if rootMerge != nil {
 		if mergeCache != nil {
-			mergeCache.set(a.HashCode(), b.HashCode(), rootMerge)
+			mergeCache.set(a.hash(), b.hash(), rootMerge)
 		}
 		return rootMerge
 	}
@@ -461,7 +461,7 @@ func mergeSingletons(a, b *BaseSingletonPredictionContext, rootIsWildcard bool, 
 		// Newjoined parent so create Newsingleton pointing to it, a'
 		spc := SingletonBasePredictionContextCreate(parent, a.returnState)
 		if mergeCache != nil {
-			mergeCache.set(a.HashCode(), b.HashCode(), spc)
+			mergeCache.set(a.hash(), b.hash(), spc)
 		}
 		return spc
 	}
@@ -483,7 +483,7 @@ func mergeSingletons(a, b *BaseSingletonPredictionContext, rootIsWildcard bool, 
 		parents := []PredictionContext{singleParent, singleParent}
 		apc := NewArrayPredictionContext(parents, payloads)
 		if mergeCache != nil {
-			mergeCache.set(a.HashCode(), b.HashCode(), apc)
+			mergeCache.set(a.hash(), b.hash(), apc)
 		}
 		return apc
 	}
@@ -499,7 +499,7 @@ func mergeSingletons(a, b *BaseSingletonPredictionContext, rootIsWildcard bool, 
 	}
 	apc := NewArrayPredictionContext(parents, payloads)
 	if mergeCache != nil {
-		mergeCache.set(a.HashCode(), b.HashCode(), apc)
+		mergeCache.set(a.hash(), b.hash(), apc)
 	}
 	return apc
 }
@@ -588,11 +588,11 @@ func mergeRoot(a, b SingletonPredictionContext, rootIsWildcard bool) PredictionC
 // /
 func mergeArrays(a, b *ArrayPredictionContext, rootIsWildcard bool, mergeCache *DoubleDict) PredictionContext {
 	if mergeCache != nil {
-		previous := mergeCache.Get(a.HashCode(), b.HashCode())
+		previous := mergeCache.Get(a.hash(), b.hash())
 		if previous != nil {
 			return previous.(PredictionContext)
 		}
-		previous = mergeCache.Get(b.HashCode(), a.HashCode())
+		previous = mergeCache.Get(b.hash(), a.hash())
 		if previous != nil {
 			return previous.(PredictionContext)
 		}
@@ -656,7 +656,7 @@ func mergeArrays(a, b *ArrayPredictionContext, rootIsWildcard bool, mergeCache *
 		if k == 1 { // for just one merged element, return singleton top
 			pc := SingletonBasePredictionContextCreate(mergedParents[0], mergedReturnStates[0])
 			if mergeCache != nil {
-				mergeCache.set(a.HashCode(), b.HashCode(), pc)
+				mergeCache.set(a.hash(), b.hash(), pc)
 			}
 			return pc
 		}
@@ -670,20 +670,20 @@ func mergeArrays(a, b *ArrayPredictionContext, rootIsWildcard bool, mergeCache *
 	// TODO: track whether this is possible above during merge sort for speed
 	if M == a {
 		if mergeCache != nil {
-			mergeCache.set(a.HashCode(), b.HashCode(), a)
+			mergeCache.set(a.hash(), b.hash(), a)
 		}
 		return a
 	}
 	if M == b {
 		if mergeCache != nil {
-			mergeCache.set(a.HashCode(), b.HashCode(), b)
+			mergeCache.set(a.hash(), b.hash(), b)
 		}
 		return b
 	}
 	combineCommonParents(mergedParents)
 
 	if mergeCache != nil {
-		mergeCache.set(a.HashCode(), b.HashCode(), M)
+		mergeCache.set(a.hash(), b.hash(), M)
 	}
 	return M
 }
