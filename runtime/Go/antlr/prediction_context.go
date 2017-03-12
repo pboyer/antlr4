@@ -427,11 +427,11 @@ func merge(a, b PredictionContext, rootIsWildcard bool, mergeCache *DoubleDict) 
 // /
 func mergeSingletons(a, b *BaseSingletonPredictionContext, rootIsWildcard bool, mergeCache *DoubleDict) PredictionContext {
 	if mergeCache != nil {
-		previous := mergeCache.get(a.Hash(), b.Hash())
+		previous := mergeCache.Get(a.Hash(), b.Hash())
 		if previous != nil {
 			return previous.(PredictionContext)
 		}
-		previous = mergeCache.get(b.Hash(), a.Hash())
+		previous = mergeCache.Get(b.Hash(), a.Hash())
 		if previous != nil {
 			return previous.(PredictionContext)
 		}
@@ -587,11 +587,11 @@ func mergeRoot(a, b SingletonPredictionContext, rootIsWildcard bool) PredictionC
 // /
 func mergeArrays(a, b *ArrayPredictionContext, rootIsWildcard bool, mergeCache *DoubleDict) PredictionContext {
 	if mergeCache != nil {
-		previous := mergeCache.get(a.Hash(), b.Hash())
+		previous := mergeCache.Get(a.Hash(), b.Hash())
 		if previous != nil {
 			return previous.(PredictionContext)
 		}
-		previous = mergeCache.get(b.Hash(), a.Hash())
+		previous = mergeCache.Get(b.Hash(), a.Hash())
 		if previous != nil {
 			return previous.(PredictionContext)
 		}

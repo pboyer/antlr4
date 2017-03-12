@@ -95,7 +95,7 @@ type BaseATNConfigSet struct {
 func NewBaseATNConfigSet(fullCtx bool) *BaseATNConfigSet {
 	return &BaseATNConfigSet{
 		cachedHash:   -1,
-		configLookup: newSet(hashATNConfig, equalATNConfigs),
+		configLookup: NewSet(hashATNConfig, equalATNConfigs),
 		fullCtx:      fullCtx,
 	}
 }
@@ -147,7 +147,7 @@ func (b *BaseATNConfigSet) Add(config ATNConfig, mergeCache *DoubleDict) bool {
 }
 
 func (b *BaseATNConfigSet) GetStates() *Set {
-	states := newSet(nil, nil)
+	states := NewSet(nil, nil)
 
 	for i := 0; i < len(b.configs); i++ {
 		states.add(b.configs[i].GetState())
@@ -281,7 +281,7 @@ func (b *BaseATNConfigSet) Clear() {
 
 	b.configs = make([]ATNConfig, 0)
 	b.cachedHash = -1
-	b.configLookup = newSet(hashATNConfig, equalATNConfigs)
+	b.configLookup = NewSet(hashATNConfig, equalATNConfigs)
 }
 
 func (b *BaseATNConfigSet) FullContext() bool {
@@ -363,7 +363,7 @@ type OrderedATNConfigSet struct {
 func NewOrderedATNConfigSet() *OrderedATNConfigSet {
 	b := NewBaseATNConfigSet(false)
 
-	b.configLookup = newSet(nil, nil)
+	b.configLookup = NewSet(nil, nil)
 
 	return &OrderedATNConfigSet{BaseATNConfigSet: b}
 }

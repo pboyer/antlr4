@@ -153,7 +153,7 @@ func (p *PrecedencePredicate) compareTo(other *PrecedencePredicate) int {
 }
 
 func (p *PrecedencePredicate) Hash() int {
-	return p.precedence
+	return 31
 }
 
 func (p *PrecedencePredicate) equals(other interface{}) bool {
@@ -190,7 +190,7 @@ type AND struct {
 }
 
 func NewAND(a, b SemanticContext) *AND {
-	operands := newSet(nil, nil)
+	operands := NewSet(nil, nil)
 	if aa, ok := a.(*AND); ok {
 		for _, o := range aa.opnds {
 			operands.add(o)
@@ -334,7 +334,7 @@ type OR struct {
 
 func NewOR(a, b SemanticContext) *OR {
 
-	operands := newSet(nil, nil)
+	operands := NewSet(nil, nil)
 	if aa, ok := a.(*OR); ok {
 		for _, o := range aa.opnds {
 			operands.add(o)

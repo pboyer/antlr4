@@ -91,7 +91,7 @@ func NewDFAState(stateNumber int, configs ATNConfigSet) *DFAState {
 
 // GetAltSet gets the set of all alts mentioned by all ATN configurations in d.
 func (d *DFAState) GetAltSet() *Set {
-	alts := newSet(nil, nil)
+	alts := NewSet(nil, nil)
 
 	if d.configs != nil {
 		for _, c := range d.configs.GetItems() {
@@ -136,19 +136,6 @@ func (d *DFAState) String() string {
 }
 
 func (d *DFAState) Hash() int {
-
-	//var s string
-	//-
-	//	-	if d.isAcceptState {
-	//	-		if d.predicates != nil {
-	//		-			s = "=>" + fmt.Sprint(d.predicates)
-	//		-		} else {
-	//		-			s = "=>" + fmt.Sprint(d.prediction)
-	//		-		}
-	//	-	}
-	//-
-	//	-	return fmt.Sprint(d.configs) + s
-	//
 
 	c := 1
 	h := murmurInit(7)

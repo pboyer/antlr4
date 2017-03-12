@@ -54,7 +54,7 @@ type Set struct {
 	equalsFunction func(interface{}, interface{}) bool
 }
 
-func newSet(hashFunction func(interface{}) int, equalsFunction func(interface{}, interface{}) bool) *Set {
+func NewSet(hashFunction func(interface{}) int, equalsFunction func(interface{}, interface{}) bool) *Set {
 	s := new(Set)
 
 	s.data = make(map[int][]interface{})
@@ -295,7 +295,7 @@ func NewDoubleDict() *DoubleDict {
 	return dd
 }
 
-func (d *DoubleDict) get(a, b int) interface{} {
+func (d *DoubleDict) Get(a, b int) interface{} {
 	data := d.data[a]
 
 	if data == nil {
