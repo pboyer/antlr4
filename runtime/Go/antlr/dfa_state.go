@@ -136,7 +136,36 @@ func (d *DFAState) String() string {
 }
 
 func (d *DFAState) Hash() int {
+
+	//var s string
+	//-
+	//	-	if d.isAcceptState {
+	//	-		if d.predicates != nil {
+	//		-			s = "=>" + fmt.Sprint(d.predicates)
+	//		-		} else {
+	//		-			s = "=>" + fmt.Sprint(d.prediction)
+	//		-		}
+	//	-	}
+	//-
+	//	-	return fmt.Sprint(d.configs) + s
+	//
+
+	c := 1
 	h := murmurInit(7)
 	h = murmurUpdate(h, d.configs.Hash())
-	return murmurFinish(h, 1)
+
+	if d.isAcceptState {
+		if d.predicates != nil {
+			for _, p := range d.predicates {
+				h = murmurUpdate(h, p.alt)
+				h = murmurUpdate(h, p.pred.Hash())
+				c += 2
+			}
+		} else {
+			c += 1
+			h = murmurUpdate(h, d.prediction)
+		}
+	}
+
+	return murmurFinish(h, c)
 }
