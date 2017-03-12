@@ -6,7 +6,6 @@ package antlr
 
 import (
 	"fmt"
-	"strconv"
 )
 
 type Comparable interface {
@@ -37,8 +36,6 @@ type ATNConfig interface {
 
 	getPrecedenceFilterSuppressed() bool
 	setPrecedenceFilterSuppressed(bool)
-
-	shortHash() string
 }
 
 type BaseATNConfig struct {
@@ -167,10 +164,6 @@ func (b *BaseATNConfig) equals(o interface{}) bool {
 	)
 
 	return nums && alts && cons && sups && equal
-}
-
-func (b *BaseATNConfig) shortHash() string {
-	return strconv.Itoa(b.state.GetStateNumber()) + "/" + strconv.Itoa(b.alt) + "/" + b.semanticContext.String()
 }
 
 func (b *BaseATNConfig) HashCode() int {
